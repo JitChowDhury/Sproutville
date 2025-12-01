@@ -15,6 +15,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        rb.linearVelocity = moveInput.action.ReadValue<Vector2>() * moveSpeed;
+        rb.linearVelocity = moveInput.action.ReadValue<Vector2>().normalized * moveSpeed;
     }
 }
