@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private Animator animator;
     [SerializeField] private float moveSpeed;
     [SerializeField] private InputActionReference moveInput;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -15,6 +16,11 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        rb.linearVelocity = moveInput.action.ReadValue<Vector2>().normalized * moveSpeed;
+        Vector2 input = moveInput.action.ReadValue<Vector2>();
+        rb.linearVelocity = input.normalized * moveSpeed;
+
+        animator.SetFloat("moveX", input.x);
+        animator.SetFloat("moveY", input.y);
+        animator.SetFloat("speed", rb.linearVelocity.magnitude);
     }
 }

@@ -1,0 +1,1 @@
+❌ Implement directional idle: store last movement direction and switch to matching idle animation (front/back/left/right).
