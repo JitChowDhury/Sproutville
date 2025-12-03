@@ -7,20 +7,27 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private float moveSpeed;
     [SerializeField] private InputActionReference moveInput;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
 
-    }
-
-    // Update is called once per frame
     void Update()
     {
         Vector2 input = moveInput.action.ReadValue<Vector2>();
         rb.linearVelocity = input.normalized * moveSpeed;
 
-        animator.SetFloat("moveX", input.x);
-        animator.SetFloat("moveY", input.y);
+        // FIX: stable diagonal → choose dominant axis
+        float animX = 0;
+        float animY = 0;
+
+        if (input.sqrMagnitude > 0.01f)
+        {
+            if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
+                animX = Mathf.Sign(input.x);
+            else
+                animY = Mathf.Sign(input.y);
+        }
+
+        animator.SetFloat("moveX", animX);
+        animator.SetFloat("moveY", animY);
+
         animator.SetFloat("speed", rb.linearVelocity.magnitude);
     }
 }
