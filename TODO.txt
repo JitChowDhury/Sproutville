@@ -1,1 +1,30 @@
+# 🌱 Sproutville – Planned Features
+
+- [✅] Tile-based movement
+- [ ] Basic tool system (hoe, watering can, axe, pickaxe)
+- [ ] Tilling, planting, watering
+- [ ] Simple time system
+- [ ] Toolbar hotbar
+- [ ] Inventory system
+- [ ] Clean pixel-art tileset
+- [ ] Crop growth system
+- [ ] Player tool animations
+- [ ] Basic NPC
+- [ ] Chopping trees
+- [ ] Mining & rocks
+- [ ] Fishing
+- [ ] Seasons system (Spring, Summer, Fall, Winter)
+- [ ] Weather (Rain, Storm, Snow)
+- [ ] More crops (Wheat, Pumpkin, Corn, Rice, etc.)
+- [ ] Animals (Cow, Chicken, Sheep, Duck)
+- [ ] Crafting system
+- [ ] House upgrades
+- [ ] Player house interior
+- [ ] NPC schedules
+- [ ] Shops & currency
+- [ ] Save/Load system
+- [ ] Small quests
+
+//BUGS------------------>
+
 ❌ Implement directional idle: store last movement direction and switch to matching idle animation (front/back/left/right).
