@@ -1,33 +1,59 @@
+// -----------------------------------------------------------------------------------------
+// using classes
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 using UnityEngine.InputSystem;
 
+// -----------------------------------------------------------------------------------------
+// player movement class
 public class PlayerController : MonoBehaviour
 {
+    // static public members
+    public static PlayerController instance;
+
+    // -----------------------------------------------------------------------------------------
+    // public members
+    [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private Rigidbody2D rb;
-    [SerializeField] private Animator animator;
-    [SerializeField] private float moveSpeed;
     [SerializeField] private InputActionReference moveInput;
+    [SerializeField] private InputActionReference actionInput;
+
+    // -----------------------------------------------------------------------------------------
+    // private members
+    private Vector2 movement;
+
+
+
+    void Awake()
+    {
+        instance = this;
+    }
 
     void Update()
     {
-        Vector2 input = moveInput.action.ReadValue<Vector2>();
-        rb.linearVelocity = input.normalized * moveSpeed;
 
-        // FIX: stable diagonal → choose dominant axis
-        float animX = 0;
-        float animY = 0;
+        movement = moveInput.action.ReadValue<Vector2>().normalized;
 
-        if (input.sqrMagnitude > 0.01f)
+        if (actionInput.action.WasPressedThisFrame())
         {
-            if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
-                animX = Mathf.Sign(input.x);
-            else
-                animY = Mathf.Sign(input.y);
+            UseTool();
         }
+    }
 
-        animator.SetFloat("moveX", animX);
-        animator.SetFloat("moveY", animY);
+    void FixedUpdate()
+    {
+        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
 
-        animator.SetFloat("speed", rb.linearVelocity.magnitude);
+
+    }
+
+    void UseTool()
+    {
+        GrowBlock block;
+
+        block = FindFirstObjectByType<GrowBlock>();
+        block.PloughSoul();
     }
 }
