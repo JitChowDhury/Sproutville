@@ -3,13 +3,13 @@ using UnityEngine;
 
 public class CameraController : MonoBehaviour
 {
-    private Transform target;
+    // private Transform target;
     [SerializeField] Transform clampMin, clampMax;
     private Camera cam;
     private float halfWidth, halfHeight;
     void Start()
     {
-        target = FindAnyObjectByType<PlayerController>().transform;
+        // target = FindAnyObjectByType<PlayerController>().transform;
 
         clampMin.SetParent(null);
         clampMax.SetParent(null);
@@ -25,7 +25,7 @@ public class CameraController : MonoBehaviour
     }
     void LateUpdate()
     {
-        transform.position = new Vector3(target.position.x, target.position.y, transform.position.z);
+        // transform.position = new Vector3(target.position.x, target.position.y, transform.position.z);
         Vector3 clampPosition = transform.position;
         clampPosition.x = Mathf.Clamp(clampPosition.x, clampMin.position.x + halfWidth, clampMax.position.x - halfWidth);
         clampPosition.y = Mathf.Clamp(clampPosition.y, clampMin.position.y + halfHeight, clampMax.position.y - halfHeight);
