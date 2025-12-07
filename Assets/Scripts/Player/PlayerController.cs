@@ -20,6 +20,17 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private InputActionReference moveInput;
     [SerializeField] private InputActionReference actionInput;
 
+    public enum ToolType
+    {
+        plough,
+        wateringCan,
+        seeds,
+        bucket
+
+    }
+
+    public ToolType currentTool;
+
     // -----------------------------------------------------------------------------------------
     // private members
     private Vector2 movement;
@@ -35,6 +46,32 @@ public class PlayerController : MonoBehaviour
     {
 
         movement = moveInput.action.ReadValue<Vector2>().normalized;
+
+        if (Keyboard.current.tabKey.wasPressedThisFrame)
+        {
+            currentTool++;
+            if ((int)currentTool >= 4)
+            {
+                currentTool = 0;
+            }
+        }
+
+        if (Keyboard.current.digit1Key.wasPressedThisFrame)
+        {
+            currentTool = ToolType.plough;
+        }
+        if (Keyboard.current.digit2Key.wasPressedThisFrame)
+        {
+            currentTool = ToolType.wateringCan;
+        }
+        if (Keyboard.current.digit3Key.wasPressedThisFrame)
+        {
+            currentTool = ToolType.seeds;
+        }
+        if (Keyboard.current.digit4Key.wasPressedThisFrame)
+        {
+            currentTool = ToolType.bucket;
+        }
 
         if (actionInput.action.WasPressedThisFrame())
         {
@@ -54,6 +91,7 @@ public class PlayerController : MonoBehaviour
         GrowBlock block;
 
         block = FindFirstObjectByType<GrowBlock>();
-        block.PloughSoul();
+        block.PloughSoil();
+
     }
 }
