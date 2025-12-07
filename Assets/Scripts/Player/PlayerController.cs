@@ -91,7 +91,27 @@ public class PlayerController : MonoBehaviour
         GrowBlock block;
 
         block = FindFirstObjectByType<GrowBlock>();
-        block.PloughSoil();
+        // block.PloughSoil();
 
+        if (block != null)
+        {
+            switch (currentTool)
+            {
+                case ToolType.plough:
+
+                    block.PloughSoil();
+                    break;
+                case ToolType.wateringCan:
+
+                    break;
+                case ToolType.seeds:
+
+                    break;
+                case ToolType.bucket:
+
+                    break;
+
+            }
+        }
     }
 }
