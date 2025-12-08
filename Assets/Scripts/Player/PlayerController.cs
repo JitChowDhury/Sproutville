@@ -95,6 +95,7 @@ public class PlayerController : MonoBehaviour
 
         if (block != null)
         {
+
             switch (currentTool)
             {
                 case ToolType.plough:
