@@ -70,6 +70,7 @@ public class PlayerController : MonoBehaviour
         if (Keyboard.current.digit2Key.wasPressedThisFrame)
         {
             currentTool = ToolType.wateringCan;
+
             hasSwitchedTool = true;
         }
         if (Keyboard.current.digit3Key.wasPressedThisFrame)
@@ -116,6 +117,7 @@ public class PlayerController : MonoBehaviour
                     block.PloughSoil();
                     break;
                 case ToolType.wateringCan:
+                    block.WaterSoil();
 
                     break;
                 case ToolType.seeds:

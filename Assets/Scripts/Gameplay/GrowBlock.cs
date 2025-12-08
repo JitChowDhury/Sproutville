@@ -4,7 +4,9 @@ using UnityEngine.InputSystem;
 public class GrowBlock : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer theSR;
-    [SerializeField] private Sprite soilTilled;
+    [SerializeField] private Sprite soilTilled, soilWatered;
+
+    public bool isWatered;
     public enum GrowthStage
     {
         barren,
@@ -49,7 +51,16 @@ public class GrowBlock : MonoBehaviour
             theSR.sprite = null;
         }
         else
-            theSR.sprite = soilTilled;
+        {
+            if (isWatered == true)
+            {
+                theSR.sprite = soilWatered;
+            }
+            else
+            {
+                theSR.sprite = soilTilled;
+            }
+        }
     }
 
     public void PloughSoil()
@@ -59,5 +70,16 @@ public class GrowBlock : MonoBehaviour
             currentStage = GrowthStage.ploughed;
             SetSoilSprite();
         }
+    }
+
+    public void WaterSoil()
+    {
+        if (currentStage == GrowthStage.ploughed)
+        {
+            isWatered = true;
+            SetSoilSprite();
+
+        }
+
     }
 }
