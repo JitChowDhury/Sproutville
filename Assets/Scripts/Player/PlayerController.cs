@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     // public members
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private Rigidbody2D rb;
+    [SerializeField] private Animator animator;
     [SerializeField] private InputActionReference moveInput;
     [SerializeField] private InputActionReference actionInput;
 
@@ -115,6 +116,7 @@ public class PlayerController : MonoBehaviour
                 case ToolType.plough:
 
                     block.PloughSoil();
+                    UseHoe();
                     break;
                 case ToolType.wateringCan:
                     block.WaterSoil();
@@ -129,5 +131,39 @@ public class PlayerController : MonoBehaviour
 
             }
         }
+    }
+    bool isUsingTool = false;
+    void UseHoe()
+    {
+        if (isUsingTool) return;
+
+        isUsingTool = true;
+
+        int dir = animator.GetInteger("orientation");
+
+        string clipName = dir switch
+        {
+            0 => "Hoe_Up",
+            2 => "Hoe_Left",
+            4 => "Hoe_Down",
+            6 => "Hoe_Right",
+            _ => "Hoe_Down"
+        };
+
+        animator.SetTrigger("hoeTrigger");
+        animator.Play(clipName, 0, 0);
+
+        StartCoroutine(ResetToolAfterAnimation());
+    }
+
+    private IEnumerator ResetToolAfterAnimation()
+    {
+        yield return null;
+
+        float length = animator.GetCurrentAnimatorStateInfo(0).length;
+        yield return new WaitForSeconds(length);
+
+        isUsingTool = false;
+        animator.SetBool("isUsingTool", false);
     }
 }
