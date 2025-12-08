@@ -51,15 +51,17 @@ public class PlayerController : MonoBehaviour
 
         movement = moveInput.action.ReadValue<Vector2>().normalized;
 
+        bool hasSwitchedTool = false;
         if (Keyboard.current.tabKey.wasPressedThisFrame)
         {
             currentTool++;
             if ((int)currentTool >= 4)
             {
                 currentTool = 0;
+
             }
+            hasSwitchedTool = true;
         }
-        bool hasSwitchedTool = false;
         if (Keyboard.current.digit1Key.wasPressedThisFrame)
         {
             currentTool = ToolType.plough;
