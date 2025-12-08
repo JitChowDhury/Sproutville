@@ -119,6 +119,7 @@ public class PlayerController : MonoBehaviour
                     UseHoe();
                     break;
                 case ToolType.wateringCan:
+                    UseWatering();
                     block.WaterSoil();
 
                     break;
@@ -141,17 +142,23 @@ public class PlayerController : MonoBehaviour
 
         int dir = animator.GetInteger("orientation");
 
-        string clipName = dir switch
-        {
-            0 => "Hoe_Up",
-            2 => "Hoe_Left",
-            4 => "Hoe_Down",
-            6 => "Hoe_Right",
-            _ => "Hoe_Down"
-        };
 
         animator.SetTrigger("hoeTrigger");
-        animator.Play(clipName, 0, 0);
+        // animator.Play(clipName, 0, 0);
+
+        StartCoroutine(ResetToolAfterAnimation());
+    }
+    void UseWatering()
+    {
+        if (isUsingTool) return;
+
+        isUsingTool = true;
+
+        int dir = animator.GetInteger("orientation");
+
+
+        animator.SetTrigger("waterTrigger");
+        // animator.Play(clipName, 0, 0);
 
         StartCoroutine(ResetToolAfterAnimation());
     }
@@ -164,6 +171,7 @@ public class PlayerController : MonoBehaviour
         yield return new WaitForSeconds(length);
 
         isUsingTool = false;
-        animator.SetBool("isUsingTool", false);
+        animator.ResetTrigger("waterTrigger"); // optional cleanup
+        animator.ResetTrigger("hoeTrigger");
     }
 }
