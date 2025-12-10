@@ -135,7 +135,7 @@ public class PlayerController : MonoBehaviour
 
                     break;
                 case ToolType.seeds:
-
+                    block.PlantCrop();
                     break;
                 case ToolType.bucket:
 

@@ -14,10 +14,14 @@ public class GrowBlock : MonoBehaviour
         planted,
         growing1,
         growing2,
+        growing3,
         ripe
     }
 
     private GrowthStage currentStage;
+
+    [SerializeField] private SpriteRenderer cropSR;
+    [SerializeField] private Sprite cropPlanted, cropGrowth1, cropGrowth2, cropGrowth3, cropRipe;
     void Start()
     {
     }
@@ -81,5 +85,37 @@ public class GrowBlock : MonoBehaviour
 
         }
 
+    }
+
+    public void PlantCrop()
+    {
+        if (currentStage == GrowthStage.ploughed && isWatered == true)
+        {
+            currentStage = GrowthStage.planted;
+            UpdateCropSprite();
+        }
+    }
+
+
+    void UpdateCropSprite()
+    {
+        switch (currentStage)
+        {
+            case GrowthStage.planted:
+                cropSR.sprite = cropPlanted;
+                break;
+            case GrowthStage.growing1:
+                cropSR.sprite = cropGrowth1;
+                break;
+            case GrowthStage.growing2:
+                cropSR.sprite = cropGrowth2;
+                break;
+            case GrowthStage.growing3:
+                cropSR.sprite = cropGrowth3;
+                break;
+            case GrowthStage.ripe:
+                cropSR.sprite = cropRipe;
+                break;
+        }
     }
 }
