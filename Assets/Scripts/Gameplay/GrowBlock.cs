@@ -37,6 +37,13 @@ public class GrowBlock : MonoBehaviour
          }
          */
 
+#if UNITY_EDITOR
+        if (Keyboard.current.nKey.wasReleasedThisFrame)
+        {
+            AdvanceCrop();
+        }
+#endif
+
     }
 
     void AdvanceStage()
@@ -78,13 +85,8 @@ public class GrowBlock : MonoBehaviour
 
     public void WaterSoil()
     {
-        if (currentStage == GrowthStage.ploughed)
-        {
-            isWatered = true;
-            SetSoilSprite();
-
-        }
-
+        isWatered = true;
+        SetSoilSprite();
     }
 
     public void PlantCrop()
@@ -116,6 +118,30 @@ public class GrowBlock : MonoBehaviour
             case GrowthStage.ripe:
                 cropSR.sprite = cropRipe;
                 break;
+        }
+    }
+
+    void AdvanceCrop()
+    {
+        if (isWatered == true)
+        {
+            if (currentStage == GrowthStage.planted || currentStage == GrowthStage.growing1 || currentStage == GrowthStage.growing2 || currentStage == GrowthStage.growing3)
+            {
+                currentStage++;
+                isWatered = false;
+                SetSoilSprite();
+                UpdateCropSprite();
+            }
+        }
+    }
+
+    public void HarvestCrop()
+    {
+        if (currentStage == GrowthStage.ripe)
+        {
+            currentStage = GrowthStage.ploughed;
+            SetSoilSprite();
+            cropSR.sprite = null;
         }
     }
 }
