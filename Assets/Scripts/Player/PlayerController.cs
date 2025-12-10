@@ -21,6 +21,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private InputActionReference moveInput;
     [SerializeField] private InputActionReference actionInput;
 
+    [SerializeField] private float toolWaitTime = .5f;
+    private float toolWaitCounter;
 
     public enum ToolType
     {
@@ -49,6 +51,16 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (toolWaitCounter > 0)
+        {
+            toolWaitCounter -= Time.deltaTime;
+            rb.linearVelocity = Vector2.zero;
+        }
+        else
+        {
+            rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+
+        }
 
         movement = moveInput.action.ReadValue<Vector2>().normalized;
 
@@ -96,7 +108,6 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
 
 
     }
@@ -107,7 +118,7 @@ public class PlayerController : MonoBehaviour
 
         block = FindFirstObjectByType<GrowBlock>();
         // block.PloughSoil();
-
+        toolWaitCounter = toolWaitTime;
         if (block != null)
         {
 
