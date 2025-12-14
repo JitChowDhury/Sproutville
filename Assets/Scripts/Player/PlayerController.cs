@@ -145,8 +145,10 @@ public class PlayerController : MonoBehaviour
     {
         GrowBlock block;
 
-        block = FindFirstObjectByType<GrowBlock>();
+        // block = FindFirstObjectByType<GrowBlock>();
         // block.PloughSoil();
+
+        block = GridController.Instance.GetBlock(toolIndicator.position.x - .5f, toolIndicator.position.y - .5f);
         toolWaitCounter = toolWaitTime;
         if (block != null)
         {

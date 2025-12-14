@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class GridController : MonoBehaviour
 {
+
+    public static GridController Instance;
     [SerializeField] private Transform minPoint, maxPoint;
 
     [SerializeField] private GrowBlock baseGridBlock;
@@ -12,6 +15,11 @@ public class GridController : MonoBehaviour
 
     public LayerMask gridBlockers;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
+
+    private void Awake()
+    {
+        Instance = this;
+    }
     void Start()
     {
         GenerateGrid();
@@ -53,6 +61,26 @@ public class GridController : MonoBehaviour
 
         baseGridBlock.gameObject.SetActive(false);
 
+    }
+
+
+    public GrowBlock GetBlock(float x, float y)
+    {
+        x = Mathf.RoundToInt(x);
+        y = Mathf.RoundToInt(y);
+
+        x -= minPoint.position.x;
+        y -= minPoint.position.y;
+
+        int intX = Mathf.RoundToInt(x);
+        int intY = Mathf.RoundToInt(y);
+
+        if (intX < gridSize.x && intY < gridSize.y)
+        {
+            return blockRows[intY].blocks[intX];
+        }
+
+        return null;
     }
 }
 [System.Serializable]
