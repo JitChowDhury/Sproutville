@@ -3,10 +3,11 @@ using UnityEngine.InputSystem;
 
 public class GrowBlock : MonoBehaviour
 {
-    [SerializeField] private SpriteRenderer theSR;
     [SerializeField] private Sprite soilTilled, soilWatered;
+    public SpriteRenderer theSR;
 
     public bool isWatered;
+    public bool preventUse;
     public enum GrowthStage
     {
         barren,
@@ -76,7 +77,7 @@ public class GrowBlock : MonoBehaviour
 
     public void PloughSoil()
     {
-        if (currentStage == GrowthStage.barren)
+        if (currentStage == GrowthStage.barren && preventUse == false)
         {
             currentStage = GrowthStage.ploughed;
             SetSoilSprite();
@@ -85,13 +86,17 @@ public class GrowBlock : MonoBehaviour
 
     public void WaterSoil()
     {
-        isWatered = true;
-        SetSoilSprite();
+        if (preventUse == false)
+        {
+            isWatered = true;
+            SetSoilSprite();
+        }
+
     }
 
     public void PlantCrop()
     {
-        if (currentStage == GrowthStage.ploughed && isWatered == true)
+        if (currentStage == GrowthStage.ploughed && isWatered == true && preventUse == false)
         {
             currentStage = GrowthStage.planted;
             UpdateCropSprite();
@@ -123,7 +128,7 @@ public class GrowBlock : MonoBehaviour
 
     void AdvanceCrop()
     {
-        if (isWatered == true)
+        if (isWatered == true && preventUse == false)
         {
             if (currentStage == GrowthStage.planted || currentStage == GrowthStage.growing1 || currentStage == GrowthStage.growing2 || currentStage == GrowthStage.growing3)
             {
@@ -137,7 +142,7 @@ public class GrowBlock : MonoBehaviour
 
     public void HarvestCrop()
     {
-        if (currentStage == GrowthStage.ripe)
+        if (currentStage == GrowthStage.ripe && preventUse == false)
         {
             currentStage = GrowthStage.ploughed;
             SetSoilSprite();
