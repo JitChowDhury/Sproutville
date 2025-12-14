@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Linq;
 using UnityEngine.InputSystem;
+using System.Diagnostics.CodeAnalysis;
+using System;
 
 // -----------------------------------------------------------------------------------------
 // player movement class
@@ -20,6 +22,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private InputActionReference moveInput;
     [SerializeField] private InputActionReference actionInput;
+    [SerializeField] private Transform toolIndicator;
+    [SerializeField] private float toolRange = 3f;
 
     [SerializeField] private float toolWaitTime = .5f;
     private float toolWaitCounter;
@@ -64,17 +68,14 @@ public class PlayerController : MonoBehaviour
         if (toolWaitCounter > 0)
         {
             toolWaitCounter -= Time.deltaTime;
-            rb.linearVelocity = Vector2.zero;
+            // rb.linearVelocity = Vector2.zero;
         }
-        else
-        {
-            rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
 
-        }
 
         movement = moveInput.action.ReadValue<Vector2>().normalized;
 
         bool hasSwitchedTool = false;
+
         if (Keyboard.current.tabKey.wasPressedThisFrame)
         {
             currentTool++;
@@ -114,13 +115,31 @@ public class PlayerController : MonoBehaviour
         {
             UseTool();
         }
+
+        toolIndicator.position = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+        toolIndicator.position = new Vector3(toolIndicator.position.x, toolIndicator.position.y, 0f);
+
+        if (Vector3.Distance(toolIndicator.position, transform.position) > toolRange)
+        {
+            Vector2 direction = toolIndicator.position - transform.position;
+            direction = direction.normalized * toolRange;
+            toolIndicator.position = transform.position + new Vector3(direction.x, direction.y, 0f);
+        }
+
+        toolIndicator.position = new Vector3(Mathf.FloorToInt(toolIndicator.position.x) + .5f, Mathf.FloorToInt(toolIndicator.position.y) + .5f, 0f);
     }
 
     void FixedUpdate()
     {
+        if (toolWaitCounter > 0)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
 
-
+        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
     }
+
 
     void UseTool()
     {
