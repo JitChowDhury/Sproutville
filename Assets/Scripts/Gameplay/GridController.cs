@@ -48,6 +48,8 @@ public class GridController : MonoBehaviour
             {
                 GrowBlock newBlock = Instantiate(baseGridBlock, startPoint + new Vector3(x, y, 0f), Quaternion.identity);
                 newBlock.transform.SetParent(transform);
+                newBlock.theSR.sprite = null;
+
                 blockRows[y].blocks.Add(newBlock);
 
                 if (Physics2D.OverlapBox(newBlock.transform.position, new Vector2(.9f, .9f), 0f, gridBlockers))
