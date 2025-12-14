@@ -38,7 +38,17 @@ public class PlayerController : MonoBehaviour
     // -----------------------------------------------------------------------------------------
     // private members
     private Vector2 movement;
+    void OnEnable()
+    {
+        moveInput.action.Enable();
+        actionInput.action.Enable();
+    }
 
+    void OnDisable()
+    {
+        moveInput.action.Disable();
+        actionInput.action.Disable();
+    }
     void Start()
     {
         UIController.instance.SwitchTool((int)currentTool);
@@ -58,7 +68,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+            rb.MovePosition(rb.position + movement * moveSpeed * Time.deltaTime);
 
         }
 
@@ -186,3 +196,6 @@ public class PlayerController : MonoBehaviour
         animator.ResetTrigger("hoeTrigger");
     }
 }
+
+
+
