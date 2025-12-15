@@ -102,6 +102,8 @@ public class PlayerController : MonoBehaviour
             currentTool = ToolType.seeds;
             hasSwitchedTool = true;
         }
+
+
         if (Keyboard.current.digit4Key.wasPressedThisFrame)
         {
             currentTool = ToolType.bucket;

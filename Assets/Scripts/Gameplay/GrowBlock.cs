@@ -1,8 +1,13 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Tilemaps;
 
 public class GrowBlock : MonoBehaviour
 {
+    [Header("Soil Tilemap")]
+    [SerializeField] private Tilemap soilMap;
+    [SerializeField] private RuleTile tilledSoilTile;
+    [SerializeField] private RuleTile wateredSoilTile;
     [SerializeField] private Sprite soilTilled, soilWatered;
     public SpriteRenderer theSR;
 
@@ -80,17 +85,30 @@ public class GrowBlock : MonoBehaviour
         if (currentStage == GrowthStage.barren && preventUse == false)
         {
             currentStage = GrowthStage.ploughed;
-            SetSoilSprite();
+            Vector3Int cellPos = soilMap.WorldToCell(transform.position);
+            soilMap.SetTile(cellPos, tilledSoilTile);
         }
     }
 
     public void WaterSoil()
     {
-        if (preventUse == false)
+        if (preventUse) return;
+
+        if (currentStage != GrowthStage.ploughed &&
+        currentStage != GrowthStage.planted &&
+        currentStage != GrowthStage.growing1 &&
+        currentStage != GrowthStage.growing2 &&
+        currentStage != GrowthStage.growing3)
+            return;
+
+        Vector3Int cellPos = soilMap.WorldToCell(transform.position);
+        if (!soilMap.HasTile(cellPos))
         {
-            isWatered = true;
-            SetSoilSprite();
+            return;
         }
+
+        isWatered = true;
+        soilMap.SetTile(cellPos, wateredSoilTile);
 
     }
 
@@ -134,7 +152,10 @@ public class GrowBlock : MonoBehaviour
             {
                 currentStage++;
                 isWatered = false;
-                SetSoilSprite();
+
+                Vector3Int cellPos = soilMap.WorldToCell(transform.position);
+                soilMap.SetTile(cellPos, tilledSoilTile);
+
                 UpdateCropSprite();
             }
         }
