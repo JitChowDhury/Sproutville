@@ -6,9 +6,10 @@ public class GrowBlock : MonoBehaviour
 {
     [Header("Soil Tilemap")]
     [SerializeField] private Tilemap soilMap;
-    [SerializeField] private RuleTile tilledSoilTile;
-    [SerializeField] private RuleTile wateredSoilTile;
-    [SerializeField] private Sprite soilTilled, soilWatered;
+    [SerializeField] private TileBase tilledSoilTile;
+
+    [SerializeField] private TileBase wateredSoilTile;
+    // [SerializeField] private Sprite soilTilled, soilWatered;
     public SpriteRenderer theSR;
 
     public bool isWatered;
@@ -61,24 +62,24 @@ public class GrowBlock : MonoBehaviour
         }
     }
 
-    public void SetSoilSprite()
-    {
-        if (currentStage == GrowthStage.barren)
-        {
-            theSR.sprite = null;
-        }
-        else
-        {
-            if (isWatered == true)
-            {
-                theSR.sprite = soilWatered;
-            }
-            else
-            {
-                theSR.sprite = soilTilled;
-            }
-        }
-    }
+    // public void SetSoilSprite()
+    // {
+    //     if (currentStage == GrowthStage.barren)
+    //     {
+    //         theSR.sprite = null;
+    //     }
+    //     else
+    //     {
+    //         if (isWatered == true)
+    //         {
+    //             theSR.sprite = soilWatered;
+    //         }
+    //         else
+    //         {
+    //             theSR.sprite = soilTilled;
+    //         }
+    //     }
+    // }
 
     public void PloughSoil()
     {
@@ -87,6 +88,7 @@ public class GrowBlock : MonoBehaviour
             currentStage = GrowthStage.ploughed;
             Vector3Int cellPos = soilMap.WorldToCell(transform.position);
             soilMap.SetTile(cellPos, tilledSoilTile);
+            soilMap.RefreshTile(cellPos);
         }
     }
 
@@ -109,6 +111,8 @@ public class GrowBlock : MonoBehaviour
 
         isWatered = true;
         soilMap.SetTile(cellPos, wateredSoilTile);
+        soilMap.RefreshTile(cellPos);
+
 
     }
 
@@ -155,7 +159,7 @@ public class GrowBlock : MonoBehaviour
 
                 Vector3Int cellPos = soilMap.WorldToCell(transform.position);
                 soilMap.SetTile(cellPos, tilledSoilTile);
-
+                soilMap.RefreshTile(cellPos);
                 UpdateCropSprite();
             }
         }
@@ -166,8 +170,11 @@ public class GrowBlock : MonoBehaviour
         if (currentStage == GrowthStage.ripe && preventUse == false)
         {
             currentStage = GrowthStage.ploughed;
-            SetSoilSprite();
             cropSR.sprite = null;
+
+            Vector3Int cellPos = soilMap.WorldToCell(transform.position);
+            soilMap.SetTile(cellPos, tilledSoilTile);
+            soilMap.RefreshTile(cellPos);
         }
     }
 }

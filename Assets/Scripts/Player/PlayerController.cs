@@ -27,6 +27,8 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float toolWaitTime = .5f;
     private float toolWaitCounter;
+    private Vector3 indicatorTargetPos;
+
 
     public enum ToolType
     {
@@ -65,6 +67,7 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+
         if (toolWaitCounter > 0)
         {
             toolWaitCounter -= Time.deltaTime;
@@ -118,17 +121,38 @@ public class PlayerController : MonoBehaviour
             UseTool();
         }
 
-        toolIndicator.position = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-        toolIndicator.position = new Vector3(toolIndicator.position.x, toolIndicator.position.y, 0f);
+        // --- TOOL INDICATOR LOGIC ONLY ---
 
-        if (Vector3.Distance(toolIndicator.position, transform.position) > toolRange)
+        if (!isUsingTool)
         {
-            Vector2 direction = toolIndicator.position - transform.position;
-            direction = direction.normalized * toolRange;
-            toolIndicator.position = transform.position + new Vector3(direction.x, direction.y, 0f);
+            Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+            mouseWorld.z = 0f;
+
+            Vector3 target = mouseWorld;
+
+            // clamp to range
+            Vector2 dir = target - transform.position;
+            if (dir.magnitude > toolRange)
+            {
+                dir = dir.normalized * toolRange;
+                target = transform.position + (Vector3)dir;
+            }
+
+            // snap AFTER intent
+            indicatorTargetPos = new Vector3(
+                Mathf.FloorToInt(target.x) + 0.5f,
+                Mathf.FloorToInt(target.y) + 0.5f,
+                0f
+            );
         }
 
-        toolIndicator.position = new Vector3(Mathf.FloorToInt(toolIndicator.position.x) + .5f, Mathf.FloorToInt(toolIndicator.position.y) + .5f, 0f);
+        // smooth visual movement (always runs)
+        toolIndicator.position = Vector3.Lerp(
+            toolIndicator.position,
+            indicatorTargetPos,
+            Time.deltaTime * 20f
+        );
+
     }
 
     void FixedUpdate()
