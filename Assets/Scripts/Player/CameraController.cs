@@ -32,4 +32,28 @@ public class CameraController : MonoBehaviour
         transform.position = clampPosition;
 
     }
+
+    public void SnapToTarget(Transform target)
+    {
+        Vector3 pos = transform.position;
+        pos.x = target.position.x;
+        pos.y = target.position.y;
+        transform.position = pos;
+
+        // Clamp immediately after snapping
+        Vector3 clampPosition = transform.position;
+        clampPosition.x = Mathf.Clamp(
+            clampPosition.x,
+            clampMin.position.x + halfWidth,
+            clampMax.position.x - halfWidth
+        );
+        clampPosition.y = Mathf.Clamp(
+            clampPosition.y,
+            clampMin.position.y + halfHeight,
+            clampMax.position.y - halfHeight
+        );
+
+        transform.position = clampPosition;
+    }
+
 }

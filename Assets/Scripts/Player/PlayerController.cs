@@ -12,8 +12,10 @@ using System;
 // player movement class
 public class PlayerController : MonoBehaviour
 {
+
+    public static PlayerController Instance;
     // static public members
-    public static PlayerController instance;
+
 
     // -----------------------------------------------------------------------------------------
     // public members
@@ -55,6 +57,7 @@ public class PlayerController : MonoBehaviour
         moveInput.action.Disable();
         actionInput.action.Disable();
     }
+
     void Start()
     {
         UIController.instance.SwitchTool((int)currentTool);
@@ -62,7 +65,8 @@ public class PlayerController : MonoBehaviour
 
     void Awake()
     {
-        instance = this;
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     void Update()
