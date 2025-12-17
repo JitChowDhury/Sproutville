@@ -23,7 +23,11 @@ public class AreaSwitcher : MonoBehaviour
     {
         if (playerInside && Keyboard.current.eKey.wasPressedThisFrame)
         {
-            StartCoroutine(ChangeScene());
+            if (doorSprite != null)
+            {
+                doorSprite.GetComponent<SpriteRenderer>().enabled = true;
+            }
+            FadeManager.Instance.FadeAndLoad(sceneToLoad);
         }
     }
 
@@ -43,15 +47,5 @@ public class AreaSwitcher : MonoBehaviour
         }
     }
 
-    IEnumerator ChangeScene()
-    {
-        if (doorSprite != null)
-        {
-            doorSprite.GetComponent<SpriteRenderer>().enabled = true;
-        }
-        yield return new WaitForSeconds(1);
 
-
-        SceneManager.LoadScene(sceneToLoad);
-    }
 }
