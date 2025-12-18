@@ -2,13 +2,21 @@ using UnityEngine;
 
 public class UIController : MonoBehaviour
 {
-    public static UIController instance;
+    public static UIController Instance;
     public GameObject[] toolBarActivatorIcons;
 
 
     private void Awake()
     {
-        instance = this;
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
     }
     void Start()
     {

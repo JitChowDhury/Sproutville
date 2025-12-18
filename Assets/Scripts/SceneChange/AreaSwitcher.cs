@@ -9,14 +9,22 @@ public class AreaSwitcher : MonoBehaviour
     [SerializeField] private string sceneToLoad;
     [SerializeField] private GameObject doorSprite;
     [SerializeField] private Transform startPosition;
+    [SerializeField] private string transitionName;
+
     private bool playerInside;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         if (doorSprite != null)
             doorSprite.GetComponent<SpriteRenderer>().enabled = false;
+        if (PlayerPrefs.HasKey("TransitionName"))
+        {
+            if (PlayerPrefs.GetString("TransitionName") == transitionName)
+            {
+                StartCoroutine(InitPlayerPosition());
+            }
+        }
 
-        StartCoroutine(InitPlayerPosition());
     }
 
     // Update is called once per frame
@@ -28,6 +36,7 @@ public class AreaSwitcher : MonoBehaviour
             {
                 doorSprite.GetComponent<SpriteRenderer>().enabled = true;
             }
+            PlayerPrefs.SetString("TransitionName", transitionName);
             FadeManager.Instance.FadeAndLoad(sceneToLoad);
         }
     }

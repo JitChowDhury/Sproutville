@@ -1,12 +1,11 @@
 // -----------------------------------------------------------------------------------------
 // using classes
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Linq;
-using UnityEngine.InputSystem;
-using System.Diagnostics.CodeAnalysis;
 using System;
+using System.Collections;
+using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
+
 
 // -----------------------------------------------------------------------------------------
 // player movement class
@@ -60,13 +59,28 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
-        UIController.instance.SwitchTool((int)currentTool);
+        UIController.Instance.SwitchTool((int)currentTool);
     }
 
     void Awake()
     {
-        Instance = this;
-        DontDestroyOnLoad(gameObject);
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        moveInput.action.Enable();
+        actionInput.action.Enable();
     }
 
     void Update()
@@ -118,7 +132,7 @@ public class PlayerController : MonoBehaviour
         }
         if (hasSwitchedTool == true)
         {
-            UIController.instance.SwitchTool((int)currentTool);
+            UIController.Instance.SwitchTool((int)currentTool);
         }
         if (actionInput.action.WasPressedThisFrame())
         {

@@ -1,14 +1,14 @@
 # 🌱 Sproutville – Planned Features
 
 - [✅] Tile-based movement
-- [ ] Basic tool system (hoe, watering can, axe, pickaxe)
-- [ ] Tilling, planting, watering
+- [✅] Basic tool system (hoe, watering can, axe, pickaxe)
+- [✅] Tilling, planting, watering
 - [ ] Simple time system
-- [ ] Toolbar hotbar
+- [✅] Toolbar hotbar
 - [ ] Inventory system
-- [ ] Clean pixel-art tileset
-- [ ] Crop growth system
-- [ ] Player tool animations
+- [✅] Clean pixel-art tileset
+- [✅] Crop growth system
+- [✅] Player tool animations
 - [ ] Basic NPC
 - [ ] Chopping trees
 - [ ] Mining & rocks
@@ -26,5 +26,3 @@
 - [ ] Small quests
 
 //BUGS------------------>
-
-❌ Implement directional idle: store last movement direction and switch to matching idle animation (front/back/left/right).
