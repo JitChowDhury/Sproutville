@@ -5,93 +5,89 @@ using UnityEngine;
 
 public class GridController : MonoBehaviour
 {
-
     public static GridController Instance;
-    [SerializeField] private Transform minPoint, maxPoint;
+    [Header("Grid Bounds")]
+    [SerializeField] private Transform gridMin;
+    [SerializeField] private Transform gridMax;
 
-    [SerializeField] private GrowBlock baseGridBlock;
+    [Header("Grid Cell")]
+    [SerializeField] private GrowBlock cellPrefab;
+
+    [Header("Blocking")]
+    [SerializeField] private LayerMask gridBlockers;
+
     private Vector2Int gridSize;
-    public List<BlockRow> blockRows = new List<BlockRow>();
 
-    public LayerMask gridBlockers;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public List<GridRow> gridRows = new List<GridRow>();
 
     private void Awake()
     {
         Instance = this;
     }
-    void Start()
+
+    private void Start()
     {
         GenerateGrid();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void GenerateGrid()
     {
+        gridRows.Clear();
 
-    }
+        //snap grid bounds to whole numbers
+        gridMin.position = new Vector3(Mathf.Round(gridMin.position.x), Mathf.Round(gridMin.position.y), 0f);
+        gridMax.position = new Vector3(Mathf.Round(gridMax.position.x), Mathf.Round(gridMax.position.y), 0f);
 
-    void GenerateGrid()
-    {
-        minPoint.position = new Vector3(Mathf.Round(minPoint.position.x), Mathf.Round(minPoint.position.y), 0f);
-        maxPoint.position = new Vector3(Mathf.Round(maxPoint.position.x), Mathf.Round(maxPoint.position.y), 0f);
+        gridSize = new Vector2Int(Mathf.RoundToInt(gridMax.position.x - gridMin.position.x), Mathf.RoundToInt(gridMax.position.y - gridMin.position.y));
 
-        Vector3 startPoint = minPoint.position + new Vector3(.5f, .5f, 0f);
-        // Instantiate(baseGridBlock, startPoint, Quaternion.identity);
-
-        gridSize = new Vector2Int(Mathf.RoundToInt(maxPoint.position.x - minPoint.position.x), Mathf.RoundToInt(maxPoint.position.y - minPoint.position.y));
-
+        //first cell position
+        Vector3 startPosition = gridMin.position + new Vector3(0.5f, 0.5f, 0.5f);
+        //create grid cells
         for (int y = 0; y < gridSize.y; y++)
         {
-            blockRows.Add(new BlockRow());
+            gridRows.Add(new GridRow());
             for (int x = 0; x < gridSize.x; x++)
             {
-                GrowBlock newBlock = Instantiate(baseGridBlock, startPoint + new Vector3(x, y, 0f), Quaternion.identity);
-                newBlock.transform.SetParent(transform);
-                newBlock.theSR.sprite = null;
+                GrowBlock cell = Instantiate(cellPrefab, startPosition + new Vector3(x, y, 0f), Quaternion.identity, transform);
 
-                blockRows[y].blocks.Add(newBlock);
+                cell.theSR.sprite = null;
+                cell.SetGridPosition(x, y);
+                gridRows[y].cells.Add(cell);
 
-                if (Physics2D.OverlapBox(newBlock.transform.position, new Vector2(.9f, .9f), 0f, gridBlockers))
+                if (Physics2D.OverlapBox(cell.transform.position, new Vector2(0.9f, 0.9f), 0f, gridBlockers))
                 {
-                    newBlock.theSR.sprite = null;
-                    newBlock.preventUse = true;
+                    cell.preventUse = true;
                 }
-
             }
         }
-
-        if (GridInfo.Instance.hasGrid == false)
+        // Initialize grid data only once
+        if (!GridInfo.Instance.hasGridData)
         {
-            GridInfo.Instance.CreateGrid();
+            GridInfo.Instance.CreateGridData(this);
         }
 
-        baseGridBlock.gameObject.SetActive(false);
+        cellPrefab.gameObject.SetActive(false);
 
     }
-
-
-    public GrowBlock GetBlock(float x, float y)
+    public GrowBlock GetCellFromWorldPosition(float worldX, float worldY)
     {
-        x = Mathf.RoundToInt(x);
-        y = Mathf.RoundToInt(y);
+        int x = Mathf.RoundToInt(worldX - gridMin.position.x);
+        int y = Mathf.RoundToInt(worldY - gridMin.position.y);
 
-        x -= minPoint.position.x;
-        y -= minPoint.position.y;
+        if (x < 0 || y < 0 || x >= gridSize.x || y >= gridSize.y)
+            return null;
 
-        int intX = Mathf.RoundToInt(x);
-        int intY = Mathf.RoundToInt(y);
-
-        if (intX < gridSize.x && intY < gridSize.y)
-        {
-            return blockRows[intY].blocks[intX];
-        }
-
-        return null;
+        return gridRows[y].cells[x];
     }
+
+    public Vector2Int GridSize => gridSize;
+
+
+
+
 }
 [System.Serializable]
-public class BlockRow
+public class GridRow
 {
-    public List<GrowBlock> blocks = new List<GrowBlock>();
+    public List<GrowBlock> cells = new List<GrowBlock>();
 }

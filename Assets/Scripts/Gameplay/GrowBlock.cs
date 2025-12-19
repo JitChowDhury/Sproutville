@@ -14,6 +14,8 @@ public class GrowBlock : MonoBehaviour
 
     public bool isWatered;
     public bool preventUse;
+
+    private Vector2Int gridPos;
     public enum GrowthStage
     {
         barren,
@@ -25,7 +27,7 @@ public class GrowBlock : MonoBehaviour
         ripe
     }
 
-    private GrowthStage currentStage;
+    public GrowthStage currentStage;
 
     [SerializeField] private SpriteRenderer cropSR;
     [SerializeField] private Sprite cropPlanted, cropGrowth1, cropGrowth2, cropGrowth3, cropRipe;
@@ -87,6 +89,7 @@ public class GrowBlock : MonoBehaviour
         {
             currentStage = GrowthStage.ploughed;
             Vector3Int cellPos = soilMap.WorldToCell(transform.position);
+            UpdateGridInfo();
             soilMap.SetTile(cellPos, tilledSoilTile);
             soilMap.RefreshTile(cellPos);
         }
@@ -110,6 +113,7 @@ public class GrowBlock : MonoBehaviour
         }
 
         isWatered = true;
+        UpdateGridInfo();
         soilMap.SetTile(cellPos, wateredSoilTile);
         soilMap.RefreshTile(cellPos);
 
@@ -146,6 +150,7 @@ public class GrowBlock : MonoBehaviour
                 cropSR.sprite = cropRipe;
                 break;
         }
+        UpdateGridInfo();
     }
 
     void AdvanceCrop()
@@ -163,6 +168,7 @@ public class GrowBlock : MonoBehaviour
                 UpdateCropSprite();
             }
         }
+
     }
 
     public void HarvestCrop()
@@ -176,5 +182,15 @@ public class GrowBlock : MonoBehaviour
             soilMap.SetTile(cellPos, tilledSoilTile);
             soilMap.RefreshTile(cellPos);
         }
+    }
+
+    public void SetGridPosition(int x, int y)
+    {
+        gridPos = new Vector2Int(x, y);
+    }
+
+    void UpdateGridInfo()
+    {
+        GridInfo.Instance.UpdateData(this, gridPos.x, gridPos.y);
     }
 }

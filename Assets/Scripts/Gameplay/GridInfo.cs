@@ -1,11 +1,17 @@
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using UnityEditor.Rendering;
 using UnityEngine;
 
 public class GridInfo : MonoBehaviour
 {
 
     public static GridInfo Instance;
+    public bool hasGridData;
+
+    // Data grid (state only)
+    public List<GridDataRow> gridData = new List<GridDataRow>();
+
     private void Awake()
     {
         if (Instance == null)
@@ -19,33 +25,38 @@ public class GridInfo : MonoBehaviour
         }
     }
 
-    public bool hasGrid;
-    public List<InfoRow> theGrid;
-
-    public void CreateGrid()
+    public void CreateGridData(GridController gridController)
     {
-        hasGrid = true;
-        for (int y = 0; y < GridController.Instance.blockRows.Count; y++)
-        {
-            theGrid.Add(new InfoRow());
+        hasGridData = true;
+        gridData.Clear();
 
-            for (int x = 0; x < GridController.Instance.blockRows[y].blocks.Count; x++)
+        for (int y = 0; y < gridController.gridRows.Count; y++)
+        {
+            gridData.Add(new GridDataRow());
+
+            for (int x = 0; x < gridController.gridRows[y].cells.Count; x++)
             {
-                theGrid[y].blocks.Add(new BlockInfo());
+                gridData[y].cells.Add(new CellData());
             }
         }
+    }
+
+    public void UpdateData(GrowBlock theBlock, int xPos, int yPos)
+    {
+        gridData[yPos].cells[xPos].growthStage = theBlock.currentStage;
+        gridData[yPos].cells[xPos].isWatered = theBlock.isWatered;
     }
 }
 
 [System.Serializable]
-public class BlockInfo
+public class CellData
 {
     public bool isWatered;
-    public GrowBlock.GrowthStage currentStage;
+    public GrowBlock.GrowthStage growthStage;
 }
-[System.Serializable]
 
-public class InfoRow
+[System.Serializable]
+public class GridDataRow
 {
-    public List<BlockInfo> blocks = new List<BlockInfo>();
+    public List<CellData> cells = new List<CellData>();
 }
