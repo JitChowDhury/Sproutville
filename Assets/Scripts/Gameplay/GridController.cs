@@ -56,7 +56,16 @@ public class GridController : MonoBehaviour
 
                 if (Physics2D.OverlapBox(cell.transform.position, new Vector2(0.9f, 0.9f), 0f, gridBlockers))
                 {
+                    cell.theSR.sprite = null;
                     cell.preventUse = true;
+                }
+                if (GridInfo.Instance.hasGridData)
+                {
+                    CellData storedBlock = GridInfo.Instance.gridData[y].cells[x];
+                    cell.currentStage = storedBlock.growthStage;
+                    cell.isWatered = storedBlock.isWatered;
+
+                    cell.ApplyVisualState();
                 }
             }
         }

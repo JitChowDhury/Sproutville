@@ -130,7 +130,7 @@ public class GrowBlock : MonoBehaviour
     }
 
 
-    void UpdateCropSprite()
+    public void UpdateCropSprite()
     {
         switch (currentStage)
         {
@@ -193,4 +193,48 @@ public class GrowBlock : MonoBehaviour
     {
         GridInfo.Instance.UpdateData(this, gridPos.x, gridPos.y);
     }
+
+    public void ApplyVisualState()
+    {
+        Vector3Int cellPos = soilMap.WorldToCell(transform.position);
+
+        // ----- Soil Tile -----
+        if (currentStage == GrowthStage.barren)
+        {
+            soilMap.SetTile(cellPos, null);
+        }
+        else
+        {
+            soilMap.SetTile(
+                cellPos,
+                isWatered ? wateredSoilTile : tilledSoilTile
+            );
+        }
+
+        soilMap.RefreshTile(cellPos);
+
+        // ----- Crop Sprite -----
+        switch (currentStage)
+        {
+            case GrowthStage.planted:
+                cropSR.sprite = cropPlanted;
+                break;
+            case GrowthStage.growing1:
+                cropSR.sprite = cropGrowth1;
+                break;
+            case GrowthStage.growing2:
+                cropSR.sprite = cropGrowth2;
+                break;
+            case GrowthStage.growing3:
+                cropSR.sprite = cropGrowth3;
+                break;
+            case GrowthStage.ripe:
+                cropSR.sprite = cropRipe;
+                break;
+            default:
+                cropSR.sprite = null;
+                break;
+        }
+    }
+
 }
