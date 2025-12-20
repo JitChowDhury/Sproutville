@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// GridInfo is responsible for storing the DATA of the grid.
@@ -33,6 +34,16 @@ public class GridInfo : MonoBehaviour
             Destroy(gameObject);
         }
     }
+    // void Update()
+    // {
+    //     if (Keyboard.current.spaceKey.wasPressedThisFrame)
+    //     {
+    //         GrowCrop();
+    //     }
+    // }
+
+
+
 
     /// <summary>
     /// Creates an empty data grid that mirrors the size of the world grid.
@@ -65,6 +76,38 @@ public class GridInfo : MonoBehaviour
     {
         gridData[yPos].cells[xPos].growthStage = theBlock.currentStage;
         gridData[yPos].cells[xPos].isWatered = theBlock.isWatered;
+    }
+
+    public void GrowCrop()
+    {
+        for (int y = 0; y < gridData.Count; y++)
+        {
+            for (int x = 0; x < gridData[y].cells.Count; x++)
+            {
+                if (gridData[y].cells[x].isWatered == true)
+                {
+                    switch (gridData[y].cells[x].growthStage)
+                    {
+                        case GrowBlock.GrowthStage.planted:
+                            gridData[y].cells[x].growthStage = GrowBlock.GrowthStage.growing1;
+                            break;
+                        case GrowBlock.GrowthStage.growing1:
+                            gridData[y].cells[x].growthStage = GrowBlock.GrowthStage.growing2;
+                            break;
+                        case GrowBlock.GrowthStage.growing2:
+                            gridData[y].cells[x].growthStage = GrowBlock.GrowthStage.growing3;
+                            break;
+                        case GrowBlock.GrowthStage.growing3:
+                            gridData[y].cells[x].growthStage = GrowBlock.GrowthStage.ripe;
+                            break;
+                        default:
+                            break;
+                    }
+                    gridData[y].cells[x].isWatered = false;
+
+                }
+            }
+        }
     }
 }
 

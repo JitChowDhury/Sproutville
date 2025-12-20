@@ -134,42 +134,52 @@ public class PlayerController : MonoBehaviour
         {
             UIController.Instance.SwitchTool((int)currentTool);
         }
-        if (actionInput.action.WasPressedThisFrame())
+        if (GridController.Instance != null)
         {
-            UseTool();
-        }
-
-        // --- TOOL INDICATOR LOGIC ONLY ---
-
-        if (!isUsingTool)
-        {
-            Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
-            mouseWorld.z = 0f;
-
-            Vector3 target = mouseWorld;
-
-            // clamp to range
-            Vector2 dir = target - transform.position;
-            if (dir.magnitude > toolRange)
+            if (actionInput.action.WasPressedThisFrame())
             {
-                dir = dir.normalized * toolRange;
-                target = transform.position + (Vector3)dir;
+                UseTool();
             }
 
-            // snap AFTER intent
-            indicatorTargetPos = new Vector3(
-                Mathf.FloorToInt(target.x) + 0.5f,
-                Mathf.FloorToInt(target.y) + 0.5f,
-                0f
+            // --- TOOL INDICATOR LOGIC ONLY ---
+
+            if (!isUsingTool)
+            {
+                Vector3 mouseWorld = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+                mouseWorld.z = 0f;
+
+                Vector3 target = mouseWorld;
+
+                // clamp to range
+                Vector2 dir = target - transform.position;
+                if (dir.magnitude > toolRange)
+                {
+                    dir = dir.normalized * toolRange;
+                    target = transform.position + (Vector3)dir;
+                }
+
+                // snap AFTER intent
+                indicatorTargetPos = new Vector3(
+                    Mathf.FloorToInt(target.x) + 0.5f,
+                    Mathf.FloorToInt(target.y) + 0.5f,
+                    0f
+                );
+            }
+
+
+            // smooth visual movement (always runs)
+            toolIndicator.position = Vector3.Lerp(
+                toolIndicator.position,
+                indicatorTargetPos,
+                Time.deltaTime * 20f
             );
         }
 
-        // smooth visual movement (always runs)
-        toolIndicator.position = Vector3.Lerp(
-            toolIndicator.position,
-            indicatorTargetPos,
-            Time.deltaTime * 20f
-        );
+        else
+        {
+            toolIndicator.position = new Vector3(0f, 0f, -20f);
+        }
+
 
     }
 
