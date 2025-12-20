@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class TimeController : MonoBehaviour
 {
@@ -9,7 +10,8 @@ public class TimeController : MonoBehaviour
 
     [SerializeField] private bool timeActive;
     [SerializeField] private float timeSpeed = .15f;
-    [SerializeField] private int currentDay = 1;
+    [SerializeField] private string dayEndScene;
+    public int currentDay = 1;
 
 
     private void Awake()
@@ -55,6 +57,7 @@ public class TimeController : MonoBehaviour
         currentDay++;
         GridInfo.Instance.GrowCrop();
         StartDay();
+        SceneManager.LoadScene(dayEndScene);
     }
     public void StartDay()
     {
