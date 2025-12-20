@@ -5,8 +5,11 @@ public class TimeController : MonoBehaviour
     public static TimeController Instance;
 
     [SerializeField] private float currentTime;
-    [SerializeField] private float timeSpeed = .15f;
     [SerializeField] private float dayStart, dayEnd;
+
+    [SerializeField] private bool timeActive;
+    [SerializeField] private float timeSpeed = .15f;
+    [SerializeField] private int currentDay = 1;
 
 
     private void Awake()
@@ -25,6 +28,8 @@ public class TimeController : MonoBehaviour
     void Start()
     {
         currentTime = dayStart;
+        timeActive = false;
+
     }
 
     // Update is called once per frame
@@ -35,11 +40,25 @@ public class TimeController : MonoBehaviour
         if (currentTime > dayEnd)
         {
             currentTime = dayEnd;
+            EndDay();
         }
 
         if (UIController.Instance != null)
         {
             UIController.Instance.UpdateTimeText(currentTime);
         }
+    }
+
+    public void EndDay()
+    {
+        timeActive = false;
+        currentDay++;
+        GridInfo.Instance.GrowCrop();
+        StartDay();
+    }
+    public void StartDay()
+    {
+        timeActive = true;
+        currentTime = dayStart;
     }
 }
