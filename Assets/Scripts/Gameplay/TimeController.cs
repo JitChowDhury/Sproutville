@@ -5,14 +5,18 @@ public class TimeController : MonoBehaviour
 {
     public static TimeController Instance;
 
-    [SerializeField] private float currentTime;
-    [SerializeField] private float dayStart, dayEnd;
+    [Header("Time Settings")]
+    [SerializeField] private float dayStart = 7f;
+    [SerializeField] private float dayEnd = 26f;
+    [SerializeField] private float timeSpeed = 0.15f;
 
-    [SerializeField] private bool timeActive;
-    [SerializeField] private float timeSpeed = .15f;
+    [Header("State")]
+    [SerializeField] private float currentTime;
+    [SerializeField] private bool timeActive = true;
+
+    [Header("Day Settings")]
     [SerializeField] private string dayEndScene;
     public int currentDay = 1;
-
 
     private void Awake()
     {
@@ -27,19 +31,18 @@ public class TimeController : MonoBehaviour
         }
     }
 
-    void Start()
+    private void Start()
     {
-        currentTime = dayStart;
-        timeActive = false;
-
+        StartDay();
     }
 
-    // Update is called once per frame
-    void Update()
+    private void Update()
     {
+        if (!timeActive) return;
+
         currentTime += Time.deltaTime * timeSpeed;
 
-        if (currentTime > dayEnd)
+        if (currentTime >= dayEnd)
         {
             currentTime = dayEnd;
             EndDay();
@@ -51,19 +54,42 @@ public class TimeController : MonoBehaviour
         }
     }
 
+    public void StartDay()
+    {
+        currentTime = dayStart;
+        timeActive = true;
+    }
+
     public void EndDay()
     {
         timeActive = false;
         currentDay++;
-        GridInfo.Instance.GrowCrop();
+
+        if (GridInfo.Instance != null)
+        {
+            GridInfo.Instance.GrowCrop();
+        }
 
         PlayerPrefs.SetString("TransitionName", "Wake Up");
-        StartDay();
+
         SceneManager.LoadScene(dayEndScene);
     }
-    public void StartDay()
+
+    // 🔑 THIS IS WHAT LIGHTING USES
+    public float GetDayNormalizedTime()
     {
-        timeActive = true;
-        currentTime = dayStart;
+        return Mathf.Clamp01(
+            Mathf.InverseLerp(dayStart, dayEnd, currentTime)
+        );
     }
+
+    // Optional helpers
+    public bool IsNight()
+    {
+        float t = GetDayNormalizedTime();
+        return t >= 0.75f;
+    }
+
+    public void PauseTime() => timeActive = false;
+    public void ResumeTime() => timeActive = true;
 }
