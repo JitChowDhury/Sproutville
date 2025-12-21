@@ -75,7 +75,7 @@ public class TimeController : MonoBehaviour
         SceneManager.LoadScene(dayEndScene);
     }
 
-    // 🔑 THIS IS WHAT LIGHTING USES
+
     public float GetDayNormalizedTime()
     {
         return Mathf.Clamp01(

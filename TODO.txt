@@ -15,7 +15,7 @@
 - [ ] Fishing
 - [ ] Seasons system (Spring, Summer, Fall, Winter)
 - [ ] Weather (Rain, Storm, Snow)
-- [ ] More crops (Wheat, Pumpkin, Corn, Rice, etc.)
+- [✅ ] More crops (Chilli(crop_01),tomato(crop_02),pumpkin(crop_07),Wheat(crop_09),Onion(crop_11),Broccoli(crop_13),lettuce(crop_16),cauliflower(cauliflower),grapes(crop_19),carrot(15))
 - [ ] Animals (Cow, Chicken, Sheep, Duck)
 - [ ] Crafting system
 - [ ] House upgrades
