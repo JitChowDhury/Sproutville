@@ -3,7 +3,7 @@
 - [✅] Tile-based movement
 - [✅] Basic tool system (hoe, watering can, axe, pickaxe)
 - [✅] Tilling, planting, watering
-- [ ] Simple time system
+- [✅] Simple time system
 - [✅] Toolbar hotbar
 - [ ] Inventory system
 - [✅] Clean pixel-art tileset
