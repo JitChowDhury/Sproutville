@@ -76,6 +76,7 @@ public class GridInfo : MonoBehaviour
     {
         gridData[yPos].cells[xPos].growthStage = theBlock.currentStage;
         gridData[yPos].cells[xPos].isWatered = theBlock.isWatered;
+        gridData[yPos].cells[xPos].cropType = theBlock.cropType;
     }
 
     public void GrowCrop()
@@ -120,6 +121,7 @@ public class CellData
 {
     public bool isWatered;
     public GrowBlock.GrowthStage growthStage;
+    public CropController.CropType cropType;
 }
 
 /// <summary>

@@ -116,6 +116,7 @@ public class GridController : MonoBehaviour
 
                     cell.currentStage = storedData.growthStage;
                     cell.isWatered = storedData.isWatered;
+                    cell.cropType = storedData.cropType;
 
                     // Apply visuals based on restored state
                     cell.ApplyVisualState();

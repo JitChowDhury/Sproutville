@@ -28,6 +28,7 @@ public class GrowBlock : MonoBehaviour
     }
 
     public GrowthStage currentStage;
+    public CropController.CropType cropType;
 
     [SerializeField] private SpriteRenderer cropSR;
     [SerializeField] private Sprite cropPlanted, cropGrowth1, cropGrowth2, cropGrowth3, cropRipe;
@@ -120,11 +121,12 @@ public class GrowBlock : MonoBehaviour
 
     }
 
-    public void PlantCrop()
+    public void PlantCrop(CropController.CropType cropToPlant)
     {
         if (currentStage == GrowthStage.ploughed && isWatered == true && preventUse == false)
         {
             currentStage = GrowthStage.planted;
+            cropType = cropToPlant;
             UpdateCropSprite();
         }
     }
@@ -132,22 +134,29 @@ public class GrowBlock : MonoBehaviour
 
     public void UpdateCropSprite()
     {
+
+        CropData activeCrop = CropController.Instance.GetCropInfo(cropType);
         switch (currentStage)
         {
             case GrowthStage.planted:
-                cropSR.sprite = cropPlanted;
+                // cropSR.sprite = cropPlanted;
+                cropSR.sprite = activeCrop.planted;
                 break;
             case GrowthStage.growing1:
-                cropSR.sprite = cropGrowth1;
+                // cropSR.sprite = cropGrowth1;
+                cropSR.sprite = activeCrop.growing1;
                 break;
             case GrowthStage.growing2:
-                cropSR.sprite = cropGrowth2;
+                // cropSR.sprite = cropGrowth2;
+                cropSR.sprite = activeCrop.growing2;
                 break;
             case GrowthStage.growing3:
-                cropSR.sprite = cropGrowth3;
+                // cropSR.sprite = cropGrowth3;
+                cropSR.sprite = activeCrop.growing3;
                 break;
             case GrowthStage.ripe:
-                cropSR.sprite = cropRipe;
+                // cropSR.sprite = cropRipe;
+                cropSR.sprite = activeCrop.ripe;
                 break;
         }
         UpdateGridInfo();
@@ -212,27 +221,28 @@ public class GrowBlock : MonoBehaviour
         }
 
         soilMap.RefreshTile(cellPos);
-
-        // ----- Crop Sprite -----
+        CropData activeCrop = CropController.Instance.GetCropInfo(cropType);
         switch (currentStage)
         {
             case GrowthStage.planted:
-                cropSR.sprite = cropPlanted;
+                // cropSR.sprite = cropPlanted;
+                cropSR.sprite = activeCrop.planted;
                 break;
             case GrowthStage.growing1:
-                cropSR.sprite = cropGrowth1;
+                // cropSR.sprite = cropGrowth1;
+                cropSR.sprite = activeCrop.growing1;
                 break;
             case GrowthStage.growing2:
-                cropSR.sprite = cropGrowth2;
+                // cropSR.sprite = cropGrowth2;
+                cropSR.sprite = activeCrop.growing2;
                 break;
             case GrowthStage.growing3:
-                cropSR.sprite = cropGrowth3;
+                // cropSR.sprite = cropGrowth3;
+                cropSR.sprite = activeCrop.growing3;
                 break;
             case GrowthStage.ripe:
-                cropSR.sprite = cropRipe;
-                break;
-            default:
-                cropSR.sprite = null;
+                // cropSR.sprite = cropRipe;
+                cropSR.sprite = activeCrop.ripe;
                 break;
         }
     }

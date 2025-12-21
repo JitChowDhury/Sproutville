@@ -7,7 +7,7 @@ public class CropController : MonoBehaviour
     public static CropController Instance;
     private void Awake()
     {
-        if (Instance = null)
+        if (Instance == null)
         {
             Instance = this;
             DontDestroyOnLoad(this);
@@ -32,6 +32,27 @@ public class CropController : MonoBehaviour
     }
 
     public List<CropData> cropList = new List<CropData>();
+
+    public CropData GetCropInfo(CropType cropToGet)
+    {
+        int position = -1;
+        for (int i = 0; i < cropList.Count; i++)
+        {
+            if (cropList[i].cropType == cropToGet)
+            {
+                position = i;
+            }
+        }
+
+        if (position >= 0)
+        {
+            return cropList[position];
+        }
+        else
+        {
+            return null;
+        }
+    }
 
 }
 [System.Serializable]

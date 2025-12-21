@@ -29,6 +29,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float toolWaitTime = .5f;
     private float toolWaitCounter;
     private Vector3 indicatorTargetPos;
+    public CropController.CropType seedCropType;
 
 
     public enum ToolType
@@ -220,7 +221,7 @@ public class PlayerController : MonoBehaviour
 
                     break;
                 case ToolType.seeds:
-                    block.PlantCrop();
+                    block.PlantCrop(seedCropType);
                     break;
                 case ToolType.bucket:
                     block.HarvestCrop();
