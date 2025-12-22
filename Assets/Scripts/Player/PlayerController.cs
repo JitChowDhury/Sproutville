@@ -221,7 +221,13 @@ public class PlayerController : MonoBehaviour
 
                     break;
                 case ToolType.seeds:
-                    block.PlantCrop(seedCropType);
+
+                    if (CropController.Instance.GetCropInfo(seedCropType).seedAmount > 0)
+                    {
+                        block.PlantCrop(seedCropType);
+                        CropController.Instance.UseSeed(seedCropType);
+                    }
+
                     break;
                 case ToolType.bucket:
                     block.HarvestCrop();

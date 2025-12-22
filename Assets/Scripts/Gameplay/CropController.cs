@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class CropController : MonoBehaviour
 {
@@ -53,6 +55,30 @@ public class CropController : MonoBehaviour
             return null;
         }
     }
+    public void UseSeed(CropType seedToUse)
+    {
+        foreach (CropData data in cropList)
+        {
+            if (data.cropType == seedToUse)
+            {
+                data.seedAmount--;
+            }
+        }
+    }
+
+    public void AddCrop(CropType cropToAdd)
+    {
+        foreach (CropData data in cropList)
+        {
+            if (data.cropType == cropToAdd)
+            {
+                data.cropAmount++;
+            }
+        }
+    }
+
+
+
 
 }
 [System.Serializable]

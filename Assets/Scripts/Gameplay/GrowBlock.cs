@@ -189,6 +189,7 @@ public class GrowBlock : MonoBehaviour
 
             Vector3Int cellPos = soilMap.WorldToCell(transform.position);
             soilMap.SetTile(cellPos, tilledSoilTile);
+            CropController.Instance.AddCrop(cropType);
             soilMap.RefreshTile(cellPos);
         }
     }
