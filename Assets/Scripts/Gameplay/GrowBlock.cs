@@ -7,192 +7,112 @@ public class GrowBlock : MonoBehaviour
     [Header("Soil Tilemap")]
     [SerializeField] private Tilemap soilMap;
     [SerializeField] private TileBase tilledSoilTile;
-
     [SerializeField] private TileBase wateredSoilTile;
-    // [SerializeField] private Sprite soilTilled, soilWatered;
-    public SpriteRenderer theSR;
 
+    [SerializeField] private SpriteRenderer cropSR;
+
+    public bool isPloughed;
     public bool isWatered;
     public bool preventUse;
 
-    private Vector2Int gridPos;
-    public enum GrowthStage
-    {
-        barren,
-        ploughed,
-        planted,
-        growing1,
-        growing2,
-        growing3,
-        ripe
-    }
-
-    public GrowthStage currentStage;
+    public int growthIndex = -1; // -1 = no crop
     public CropController.CropType cropType;
 
-    [SerializeField] private SpriteRenderer cropSR;
-    [SerializeField] private Sprite cropPlanted, cropGrowth1, cropGrowth2, cropGrowth3, cropRipe;
-    void Start()
-    {
-    }
+    private Vector2Int gridPos;
 
-    // Update is called once per frame
     void Update()
     {
-        /* if (Keyboard.current.eKey.wasPressedThisFrame)
-         {
-             AdvanceStage();
-
-             SetSoilSprite();
-         }
-         */
-
 #if UNITY_EDITOR
+        // DEBUG: manual growth step (same purpose as before)
         if (Keyboard.current.nKey.wasReleasedThisFrame)
         {
-            AdvanceCrop();
+            AdvanceCropDebug();
         }
 #endif
-
     }
 
-    void AdvanceStage()
-    {
-        currentStage = currentStage + 1;
-        if ((int)currentStage >= 6)
-        {
-            currentStage = GrowthStage.barren;
-        }
-    }
-
-    // public void SetSoilSprite()
-    // {
-    //     if (currentStage == GrowthStage.barren)
-    //     {
-    //         theSR.sprite = null;
-    //     }
-    //     else
-    //     {
-    //         if (isWatered == true)
-    //         {
-    //             theSR.sprite = soilWatered;
-    //         }
-    //         else
-    //         {
-    //             theSR.sprite = soilTilled;
-    //         }
-    //     }
-    // }
+    // ---------- SOIL ----------
 
     public void PloughSoil()
     {
-        if (currentStage == GrowthStage.barren && preventUse == false)
-        {
-            currentStage = GrowthStage.ploughed;
-            Vector3Int cellPos = soilMap.WorldToCell(transform.position);
-            UpdateGridInfo();
-            soilMap.SetTile(cellPos, tilledSoilTile);
-            soilMap.RefreshTile(cellPos);
-        }
+        if (isPloughed || preventUse) return;
+
+        isPloughed = true;
+        SetSoilTile(tilledSoilTile);
+        UpdateGridInfo();
     }
 
     public void WaterSoil()
     {
-        if (preventUse) return;
-
-        if (currentStage != GrowthStage.ploughed &&
-        currentStage != GrowthStage.planted &&
-        currentStage != GrowthStage.growing1 &&
-        currentStage != GrowthStage.growing2 &&
-        currentStage != GrowthStage.growing3)
-            return;
-
-        Vector3Int cellPos = soilMap.WorldToCell(transform.position);
-        if (!soilMap.HasTile(cellPos))
-        {
-            return;
-        }
+        if (!isPloughed || preventUse) return;
 
         isWatered = true;
+        SetSoilTile(wateredSoilTile);
         UpdateGridInfo();
-        soilMap.SetTile(cellPos, wateredSoilTile);
-        soilMap.RefreshTile(cellPos);
-
-
     }
 
-    public void PlantCrop(CropController.CropType cropToPlant)
+    // ---------- CROP ----------
+
+    public bool PlantCrop(CropController.CropType type)
     {
-        if (currentStage == GrowthStage.ploughed && isWatered == true && preventUse == false)
+        if (!isPloughed || !isWatered || preventUse || growthIndex >= 0)
+            return false;
+
+        cropType = type;
+        growthIndex = 0;
+
+        UpdateCropSprite();
+        UpdateGridInfo();
+
+        return true;
+    }
+
+
+    public void HarvestCrop()
+    {
+        if (growthIndex < 0 || preventUse) return;
+
+        CropData crop = CropController.Instance.GetCropInfo(cropType);
+        if (growthIndex < crop.TotalGrowthStages - 1) return;
+
+        CropController.Instance.AddCrop(cropType);
+
+        growthIndex = -1;
+        cropSR.sprite = null;
+
+        SetSoilTile(tilledSoilTile);
+        UpdateGridInfo();
+    }
+
+    // ---------- GROWTH ----------
+
+    void AdvanceCropDebug()
+    {
+        if (!isWatered || preventUse || growthIndex < 0) return;
+
+        CropData crop = CropController.Instance.GetCropInfo(cropType);
+
+        if (growthIndex < crop.TotalGrowthStages - 1)
         {
-            currentStage = GrowthStage.planted;
-            cropType = cropToPlant;
+            growthIndex++;
+            isWatered = false;
+
+            SetSoilTile(tilledSoilTile);
             UpdateCropSprite();
         }
     }
 
-
     public void UpdateCropSprite()
     {
+        if (growthIndex < 0) return;
 
-        CropData activeCrop = CropController.Instance.GetCropInfo(cropType);
-        switch (currentStage)
-        {
-            case GrowthStage.planted:
-                // cropSR.sprite = cropPlanted;
-                cropSR.sprite = activeCrop.planted;
-                break;
-            case GrowthStage.growing1:
-                // cropSR.sprite = cropGrowth1;
-                cropSR.sprite = activeCrop.growing1;
-                break;
-            case GrowthStage.growing2:
-                // cropSR.sprite = cropGrowth2;
-                cropSR.sprite = activeCrop.growing2;
-                break;
-            case GrowthStage.growing3:
-                // cropSR.sprite = cropGrowth3;
-                cropSR.sprite = activeCrop.growing3;
-                break;
-            case GrowthStage.ripe:
-                // cropSR.sprite = cropRipe;
-                cropSR.sprite = activeCrop.ripe;
-                break;
-        }
+        CropData crop = CropController.Instance.GetCropInfo(cropType);
+        cropSR.sprite = crop.growthSprites[growthIndex];
+
         UpdateGridInfo();
     }
 
-    void AdvanceCrop()
-    {
-        if (isWatered == true && preventUse == false)
-        {
-            if (currentStage == GrowthStage.planted || currentStage == GrowthStage.growing1 || currentStage == GrowthStage.growing2 || currentStage == GrowthStage.growing3)
-            {
-                currentStage++;
-                isWatered = false;
-
-                Vector3Int cellPos = soilMap.WorldToCell(transform.position);
-                soilMap.SetTile(cellPos, tilledSoilTile);
-                soilMap.RefreshTile(cellPos);
-                UpdateCropSprite();
-            }
-        }
-
-    }
-
-    public void HarvestCrop()
-    {
-        if (currentStage == GrowthStage.ripe && preventUse == false)
-        {
-            currentStage = GrowthStage.ploughed;
-            cropSR.sprite = null;
-
-            Vector3Int cellPos = soilMap.WorldToCell(transform.position);
-            soilMap.SetTile(cellPos, tilledSoilTile);
-            CropController.Instance.AddCrop(cropType);
-            soilMap.RefreshTile(cellPos);
-        }
-    }
+    // ---------- GRID ----------
 
     public void SetGridPosition(int x, int y)
     {
@@ -208,8 +128,7 @@ public class GrowBlock : MonoBehaviour
     {
         Vector3Int cellPos = soilMap.WorldToCell(transform.position);
 
-        // ----- Soil Tile -----
-        if (currentStage == GrowthStage.barren)
+        if (!isPloughed)
         {
             soilMap.SetTile(cellPos, null);
         }
@@ -222,30 +141,22 @@ public class GrowBlock : MonoBehaviour
         }
 
         soilMap.RefreshTile(cellPos);
-        CropData activeCrop = CropController.Instance.GetCropInfo(cropType);
-        switch (currentStage)
+
+        if (growthIndex >= 0)
         {
-            case GrowthStage.planted:
-                // cropSR.sprite = cropPlanted;
-                cropSR.sprite = activeCrop.planted;
-                break;
-            case GrowthStage.growing1:
-                // cropSR.sprite = cropGrowth1;
-                cropSR.sprite = activeCrop.growing1;
-                break;
-            case GrowthStage.growing2:
-                // cropSR.sprite = cropGrowth2;
-                cropSR.sprite = activeCrop.growing2;
-                break;
-            case GrowthStage.growing3:
-                // cropSR.sprite = cropGrowth3;
-                cropSR.sprite = activeCrop.growing3;
-                break;
-            case GrowthStage.ripe:
-                // cropSR.sprite = cropRipe;
-                cropSR.sprite = activeCrop.ripe;
-                break;
+            CropData crop = CropController.Instance.GetCropInfo(cropType);
+            cropSR.sprite = crop.growthSprites[growthIndex];
+        }
+        else
+        {
+            cropSR.sprite = null;
         }
     }
 
+    void SetSoilTile(TileBase tile)
+    {
+        Vector3Int pos = soilMap.WorldToCell(transform.position);
+        soilMap.SetTile(pos, tile);
+        soilMap.RefreshTile(pos);
+    }
 }

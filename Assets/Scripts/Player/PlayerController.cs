@@ -224,8 +224,11 @@ public class PlayerController : MonoBehaviour
 
                     if (CropController.Instance.GetCropInfo(seedCropType).seedAmount > 0)
                     {
-                        block.PlantCrop(seedCropType);
-                        CropController.Instance.UseSeed(seedCropType);
+                        if (block.PlantCrop(seedCropType))
+                        {
+                            CropController.Instance.UseSeed(seedCropType);
+                        }
+
                     }
 
                     break;

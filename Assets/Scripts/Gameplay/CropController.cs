@@ -1,24 +1,23 @@
 using System.Collections.Generic;
-using NUnit.Framework;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 public class CropController : MonoBehaviour
 {
-
     public static CropController Instance;
+
     private void Awake()
     {
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(this);
+            DontDestroyOnLoad(gameObject);
         }
         else
         {
             Destroy(gameObject);
         }
     }
+
     public enum CropType
     {
         chilli,
@@ -35,59 +34,41 @@ public class CropController : MonoBehaviour
 
     public List<CropData> cropList = new List<CropData>();
 
-    public CropData GetCropInfo(CropType cropToGet)
+    public CropData GetCropInfo(CropType type)
     {
-        int position = -1;
-        for (int i = 0; i < cropList.Count; i++)
+        foreach (var crop in cropList)
         {
-            if (cropList[i].cropType == cropToGet)
-            {
-                position = i;
-            }
+            if (crop.cropType == type)
+                return crop;
         }
-
-        if (position >= 0)
-        {
-            return cropList[position];
-        }
-        else
-        {
-            return null;
-        }
-    }
-    public void UseSeed(CropType seedToUse)
-    {
-        foreach (CropData data in cropList)
-        {
-            if (data.cropType == seedToUse)
-            {
-                data.seedAmount--;
-            }
-        }
+        return null;
     }
 
-    public void AddCrop(CropType cropToAdd)
+    public void UseSeed(CropType type)
     {
-        foreach (CropData data in cropList)
-        {
-            if (data.cropType == cropToAdd)
-            {
-                data.cropAmount++;
-            }
-        }
+        CropData crop = GetCropInfo(type);
+        if (crop != null && crop.seedAmount > 0)
+            crop.seedAmount--;
     }
 
-
-
-
+    public void AddCrop(CropType type)
+    {
+        CropData crop = GetCropInfo(type);
+        if (crop != null)
+            crop.cropAmount++;
+    }
 }
+
 [System.Serializable]
 public class CropData
 {
     public CropController.CropType cropType;
-    public Sprite finalCrop, seedType, planted, growing1, growing2, growing3, ripe;
 
-    public int seedAmount, cropAmount;
+    [Tooltip("Ordered growth sprites (day 1 → ripe)")]
+    public List<Sprite> growthSprites;
 
+    public int seedAmount;
+    public int cropAmount;
+
+    public int TotalGrowthStages => growthSprites.Count;
 }
-
