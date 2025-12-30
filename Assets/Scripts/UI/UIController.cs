@@ -1,11 +1,13 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class UIController : MonoBehaviour
 {
     public static UIController Instance;
     public GameObject[] toolBarActivatorIcons;
     public TMP_Text timeText;
+    public InventoryController ic;
 
 
     private void Awake()
@@ -23,6 +25,14 @@ public class UIController : MonoBehaviour
     void Start()
     {
 
+    }
+
+    void Update()
+    {
+        if (Keyboard.current.iKey.wasPressedThisFrame)
+        {
+            ic.OpenClose();
+        }
     }
 
     public void SwitchTool(int selected)
