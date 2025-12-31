@@ -280,6 +280,11 @@ public class PlayerController : MonoBehaviour
         animator.ResetTrigger("waterTrigger"); // optional cleanup
         animator.ResetTrigger("hoeTrigger");
     }
+
+    public void SwitchSeed(CropController.CropType newSeed)
+    {
+        seedCropType = newSeed;
+    }
 }
 
 
