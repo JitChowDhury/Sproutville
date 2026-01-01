@@ -86,6 +86,16 @@ public class PlayerController : MonoBehaviour
 
     void Update()
     {
+        if (UIController.Instance != null)
+        {
+            if (UIController.Instance.ic != null)
+            {
+                if (UIController.Instance.ic.gameObject.activeSelf == true)
+                {
+                    return;
+                }
+            }
+        }
 
         if (toolWaitCounter > 0)
         {
@@ -186,6 +196,16 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (UIController.Instance != null)
+        {
+            if (UIController.Instance.ic != null)
+            {
+                if (UIController.Instance.ic.gameObject.activeSelf == true)
+                {
+                    return;
+                }
+            }
+        }
         if (toolWaitCounter > 0)
         {
             rb.linearVelocity = Vector2.zero;

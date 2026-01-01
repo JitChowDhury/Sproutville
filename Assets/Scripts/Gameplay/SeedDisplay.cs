@@ -18,5 +18,6 @@ public class SeedDisplay : MonoBehaviour
     {
         PlayerController.Instance.SwitchSeed(crop);
         UIController.Instance.SwitchSeed(crop);
+        UIController.Instance.ic.OpenClose();
     }
 }
