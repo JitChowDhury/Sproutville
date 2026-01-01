@@ -9,6 +9,7 @@ public class UIController : MonoBehaviour
     public GameObject[] toolBarActivatorIcons;
     public TMP_Text timeText;
     public InventoryController ic;
+    public ShopController theShop;
     public Image seedImage;
 
     private void Awake()
@@ -33,6 +34,11 @@ public class UIController : MonoBehaviour
         if (Keyboard.current.iKey.wasPressedThisFrame)
         {
             ic.OpenClose();
+        }
+
+        if (Keyboard.current.bKey.wasPressedThisFrame)
+        {
+            theShop.OpenClose();
         }
     }
 
