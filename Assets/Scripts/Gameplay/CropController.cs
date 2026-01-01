@@ -70,5 +70,6 @@ public class CropData
     public int seedAmount;
     public int cropAmount;
     public Sprite seedSprite;
+    public Sprite finalCrop;
     public int TotalGrowthStages => growthSprites.Count;
 }
