@@ -1,4 +1,5 @@
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,6 +19,14 @@ public class ShopSeedDisplay : MonoBehaviour
 
     public void BuySeed(int amount)
     {
+        CropData info = CropController.Instance.GetCropInfo(crop);
+        if (CurrencyController.Instance.CheckMoney(info.seedPrice * amount))
+        {
+            CropController.Instance.AddSeed(crop, amount);
 
+            CurrencyController.Instance.SpendMoney(info.seedPrice * amount);
+
+            UpdateDisplay();
+        }
     }
 }
