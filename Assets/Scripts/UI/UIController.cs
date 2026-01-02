@@ -8,6 +8,7 @@ public class UIController : MonoBehaviour
     public static UIController Instance;
     public GameObject[] toolBarActivatorIcons;
     public TMP_Text timeText;
+    public TMP_Text moneyText;
     public InventoryController ic;
     public ShopController theShop;
     public Image seedImage;
@@ -80,6 +81,11 @@ public class UIController : MonoBehaviour
     public void SwitchSeed(CropController.CropType crop)
     {
         seedImage.sprite = CropController.Instance.GetCropInfo(crop).seedSprite;
+    }
+
+    public void UpdateMoneyText(float currentMoney)
+    {
+        moneyText.text = "$" + currentMoney;
     }
 
 }
