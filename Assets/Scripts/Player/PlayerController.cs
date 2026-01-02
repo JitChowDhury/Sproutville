@@ -96,6 +96,13 @@ public class PlayerController : MonoBehaviour
                     return;
                 }
             }
+            if (UIController.Instance.theShop != null)
+            {
+                if (UIController.Instance.theShop.gameObject.activeSelf == true)
+                {
+                    return;
+                }
+            }
         }
 
         if (toolWaitCounter > 0)
@@ -202,6 +209,13 @@ public class PlayerController : MonoBehaviour
             if (UIController.Instance.ic != null)
             {
                 if (UIController.Instance.ic.gameObject.activeSelf == true)
+                {
+                    return;
+                }
+            }
+            if (UIController.Instance.theShop != null)
+            {
+                if (UIController.Instance.theShop.gameObject.activeSelf == true)
                 {
                     return;
                 }
