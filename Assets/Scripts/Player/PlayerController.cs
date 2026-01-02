@@ -61,6 +61,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         UIController.Instance.SwitchTool((int)currentTool);
+        UIController.Instance.SwitchSeed(seedCropType);
     }
 
     void Awake()

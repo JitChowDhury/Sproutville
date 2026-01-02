@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 public class ShopCropDisplay : MonoBehaviour
 {
@@ -19,6 +20,16 @@ public class ShopCropDisplay : MonoBehaviour
 
     public void SellCrop()
     {
+        CropData info = CropController.Instance.GetCropInfo(crop);
+
+        if (info.cropAmount > 0)
+        {
+            CurrencyController.Instance.AddMoney(info.cropAmount * info.cropPrice);
+
+            CropController.Instance.RemoveCrop(crop);
+
+            UpdateDisplay();
+        }
 
     }
 }
