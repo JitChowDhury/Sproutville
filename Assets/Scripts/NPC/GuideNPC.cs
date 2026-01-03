@@ -44,10 +44,21 @@ public class GuideNPC : MonoBehaviour
         switch (TutorialManager.Instance.CurrentState)
         {
             case TutorialManager.TutorialState.NotStarted:
-                DialogueUI.Instance.PlayLines(firstDialogueLines);
+                DialogueUI.Instance.PlayLines(new string[]
+                {
+                "Welcome to Sprout Ville!",
+                "Make your own farm here.",
+                "I'll give you 5 chilli seeds.",
+                "Use your hotbar tools to work the farm.",
+                "Hoe to till soil, watering can to water.",
+                "Use seeds to plant and bucket to harvest.",
+                "Plant them inside the fenced area."
+                });
+
                 GiveStarterItems();
                 TutorialManager.Instance.SetState(TutorialManager.TutorialState.SeedsGiven);
                 break;
+
 
             case TutorialManager.TutorialState.SeedsGiven:
                 DialogueUI.Instance.PlayLines(new string[]

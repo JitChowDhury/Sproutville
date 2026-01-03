@@ -10,6 +10,9 @@ public class AreaSwitcher : MonoBehaviour
     [SerializeField] private GameObject doorSprite;
     [SerializeField] private Transform startPosition;
     [SerializeField] private string transitionName;
+    [SerializeField] private bool shouldInteract;
+    private bool isTransitioning;
+
 
     private bool playerInside;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -30,15 +33,29 @@ public class AreaSwitcher : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (playerInside && Keyboard.current.eKey.wasPressedThisFrame)
+        if (isTransitioning) return;
+        if (shouldInteract)
         {
-            if (doorSprite != null)
+            if (playerInside && Keyboard.current.eKey.wasPressedThisFrame)
             {
-                doorSprite.GetComponent<SpriteRenderer>().enabled = true;
+                TriggerTransition();
             }
-            PlayerPrefs.SetString("TransitionName", transitionName);
-            FadeManager.Instance.FadeAndLoad(sceneToLoad);
         }
+        else if (playerInside)
+        {
+            TriggerTransition();
+        }
+
+    }
+    void TriggerTransition()
+    {
+        isTransitioning = true;
+
+        if (doorSprite != null)
+            doorSprite.GetComponent<SpriteRenderer>().enabled = true;
+
+        PlayerPrefs.SetString("TransitionName", transitionName);
+        FadeManager.Instance.FadeAndLoad(sceneToLoad);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
