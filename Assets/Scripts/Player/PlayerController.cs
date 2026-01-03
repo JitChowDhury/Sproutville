@@ -104,6 +104,9 @@ public class PlayerController : MonoBehaviour
                 }
             }
         }
+        if (DialogueUI.Instance != null && DialogueUI.Instance.IsPlaying)
+            return;
+
 
         if (toolWaitCounter > 0)
         {
@@ -226,6 +229,8 @@ public class PlayerController : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
             return;
         }
+        if (DialogueUI.Instance != null && DialogueUI.Instance.IsPlaying)
+            return;
 
         rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
     }

@@ -13,7 +13,7 @@ public class GrowBlock : MonoBehaviour
 
     public bool isPloughed;
     public bool isWatered;
-    public bool preventUse;
+    public bool preventUse = true;
 
     public int growthIndex = -1; // -1 = no crop
     public CropController.CropType cropType;
@@ -63,6 +63,13 @@ public class GrowBlock : MonoBehaviour
 
         UpdateCropSprite();
         UpdateGridInfo();
+        if (TutorialManager.Instance.CurrentState ==
+            TutorialManager.TutorialState.SeedsGiven)
+        {
+            TutorialManager.Instance.SetState(
+                TutorialManager.TutorialState.SeedPlanted
+            );
+        }
 
         return true;
     }
@@ -94,11 +101,30 @@ public class GrowBlock : MonoBehaviour
 
         if (growthIndex < crop.TotalGrowthStages - 1)
         {
+            if (TutorialManager.Instance.CurrentState ==
+    TutorialManager.TutorialState.SeedPlanted)
+            {
+                TutorialManager.Instance.SetState(
+                    TutorialManager.TutorialState.CropGrowing
+                );
+            }
+
             growthIndex++;
             isWatered = false;
 
             SetSoilTile(tilledSoilTile);
             UpdateCropSprite();
+        }
+        else if (growthIndex == crop.TotalGrowthStages - 1)
+        {
+            if (TutorialManager.Instance.CurrentState ==
+                TutorialManager.TutorialState.CropGrowing)
+            {
+                TutorialManager.Instance.SetState(
+                    TutorialManager.TutorialState.CropFullyGrown
+                );
+            }
+
         }
     }
 

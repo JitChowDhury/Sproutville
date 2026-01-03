@@ -8,7 +8,7 @@ public class GridController : MonoBehaviour
     [SerializeField] private Transform gridMin;
     [SerializeField] private Transform gridMax;
     [SerializeField] private GrowBlock cellPrefab;
-    [SerializeField] private LayerMask gridBlockers;
+    [SerializeField] private LayerMask gridAllow;
 
     public List<GridRow> gridRows = new List<GridRow>();
     private Vector2Int gridSize;
@@ -62,14 +62,21 @@ public class GridController : MonoBehaviour
                 cell.SetGridPosition(x, y);
                 gridRows[y].cells.Add(cell);
 
-                if (Physics2D.OverlapBox(
+                bool isAllowed = Physics2D.OverlapBox(
                     cell.transform.position,
                     new Vector2(0.9f, 0.9f),
                     0f,
-                    gridBlockers))
-                {
-                    cell.preventUse = true;
-                }
+                    gridAllow
+                );
+
+                cell.preventUse = !isAllowed;
+
+                Debug.DrawLine(
+    cell.transform.position + Vector3.left * 0.45f,
+    cell.transform.position + Vector3.right * 0.45f,
+    cell.preventUse ? Color.red : Color.green,
+    5f
+);
 
                 if (GridInfo.Instance.hasGridData)
                 {
