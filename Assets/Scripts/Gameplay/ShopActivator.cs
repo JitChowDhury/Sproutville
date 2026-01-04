@@ -16,7 +16,15 @@ public class ShopActivator : MonoBehaviour
                 if (UIController.Instance.theShop.gameObject.activeSelf == false)
                 {
                     UIController.Instance.theShop.OpenClose();
+                    if (TutorialManager.Instance.CurrentState ==
+    TutorialManager.TutorialState.CropFullyGrown)
+                    {
+                        TutorialManager.Instance.SetState(
+                            TutorialManager.TutorialState.ShopUnlocked
+                        );
+                    }
                 }
+
             }
         }
     }
