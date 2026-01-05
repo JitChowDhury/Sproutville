@@ -86,7 +86,7 @@ public class UIController : MonoBehaviour
 
     public void UpdateMoneyText(float currentMoney)
     {
-        moneyText.text = "$" + currentMoney;
+        moneyText.text = currentMoney.ToString();
     }
 
 }
