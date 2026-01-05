@@ -25,6 +25,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private InputActionReference actionInput;
     [SerializeField] private Transform toolIndicator;
     [SerializeField] private float toolRange = 3f;
+    [SerializeField] private InputActionAsset inputActions;
+
 
     [SerializeField] private float toolWaitTime = .5f;
     private float toolWaitCounter;
@@ -46,17 +48,6 @@ public class PlayerController : MonoBehaviour
     // -----------------------------------------------------------------------------------------
     // private members
     private Vector2 movement;
-    void OnEnable()
-    {
-        moveInput.action.Enable();
-        actionInput.action.Enable();
-    }
-
-    void OnDisable()
-    {
-        moveInput.action.Disable();
-        actionInput.action.Disable();
-    }
 
     void Start()
     {
@@ -76,17 +67,40 @@ public class PlayerController : MonoBehaviour
         {
             Destroy(gameObject);
         }
-
     }
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        moveInput.action.Enable();
-        actionInput.action.Enable();
+        inputActions.Disable();
+        inputActions.Enable();
+
+
+        isUsingTool = false;
+        toolWaitCounter = 0f;
+
+        animator.ResetTrigger("hoeTrigger");
+        animator.ResetTrigger("waterTrigger");
     }
+
+
+    private void OnEnable()
+    {
+        inputActions.Enable();
+    }
+
+    private void OnDisable()
+    {
+        inputActions.Disable();
+    }
+
 
     void Update()
     {
+        if (actionInput.action.WasPressedThisFrame())
+        {
+            Debug.Log("ACTION DETECTED");
+        }
+
         if (UIController.Instance != null)
         {
             if (UIController.Instance.ic != null)
@@ -238,12 +252,19 @@ public class PlayerController : MonoBehaviour
 
     void UseTool()
     {
+
+
         GrowBlock block;
 
         // block = FindFirstObjectByType<GrowBlock>();
         // block.PloughSoil();
 
         block = GridController.Instance.GetCellFromWorldPosition(toolIndicator.position.x - .5f, toolIndicator.position.y - .5f);
+        if (block == null)
+        {
+            Debug.Log("No GrowBlock found under tool indicator");
+            return;
+        }
         toolWaitCounter = toolWaitTime;
         if (block != null)
         {

@@ -6,6 +6,7 @@ TagManager:
   tags:
   - CameraClampMin
   - CameraClampMax
+  - GroundOverlay
   layers:
   - Default
   - TransparentFX

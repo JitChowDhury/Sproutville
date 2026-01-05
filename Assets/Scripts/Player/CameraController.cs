@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Camera))]
 public class CameraController : MonoBehaviour
@@ -6,7 +8,7 @@ public class CameraController : MonoBehaviour
     [Header("Target")]
     [SerializeField] private Transform target;
 
-    [Header("Clamp Bounds")]
+    [Header("Clamp Bounds (Auto-found per scene)")]
     [SerializeField] private Transform clampMin;
     [SerializeField] private Transform clampMax;
 
@@ -21,29 +23,68 @@ public class CameraController : MonoBehaviour
     private void Awake()
     {
         cam = GetComponent<Camera>();
+        DontDestroyOnLoad(gameObject);
+
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
     private void Start()
     {
-        // Detach bounds so they don't move with parents
-        if (clampMin) clampMin.SetParent(null);
-        if (clampMax) clampMax.SetParent(null);
-
         RecalculateCameraSize();
     }
 
     private void LateUpdate()
     {
         if (followTarget && target != null)
-        {
             Follow();
+
+        if (enableClamping && clampMin && clampMax)
+            ClampCamera();
+    }
+
+    // ---------------- SCENE LOAD ----------------
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        clampMin = null;
+        clampMax = null;
+
+        if (PlayerController.Instance != null)
+            SetTarget(PlayerController.Instance.transform, true);
+
+        StartCoroutine(DelayedClampSearch());
+    }
+
+    private IEnumerator DelayedClampSearch()
+    {
+        yield return null; // wait one frame so scene objects exist
+
+        GameObject minObj = GameObject.FindGameObjectWithTag("CameraClampMin");
+        GameObject maxObj = GameObject.FindGameObjectWithTag("CameraClampMax");
+
+        if (!minObj || !maxObj)
+        {
+            Debug.LogWarning(
+                $"Camera clamps missing in scene '{SceneManager.GetActiveScene().name}'"
+            );
+            yield break;
         }
 
-        if (enableClamping)
-        {
-            ClampCamera();
-        }
+        clampMin = minObj.transform;
+        clampMax = maxObj.transform;
+
+        clampMin.SetParent(null);
+        clampMax.SetParent(null);
+
+        SnapToTarget(target);
     }
+
+    // ---------------- CAMERA LOGIC ----------------
 
     private void Follow()
     {
@@ -55,8 +96,6 @@ public class CameraController : MonoBehaviour
 
     private void ClampCamera()
     {
-        if (!clampMin || !clampMax) return;
-
         Vector3 pos = transform.position;
 
         pos.x = Mathf.Clamp(
@@ -80,6 +119,7 @@ public class CameraController : MonoBehaviour
         halfWidth = halfHeight * cam.aspect;
     }
 
+    // ---------------- PUBLIC API ----------------
 
     public void SetTarget(Transform newTarget, bool snap = true)
     {
@@ -87,44 +127,28 @@ public class CameraController : MonoBehaviour
         followTarget = newTarget != null;
 
         if (snap && target != null)
-        {
             SnapToTarget(target);
-        }
-    }
-
-    public void StopFollowing()
-    {
-        followTarget = false;
-    }
-
-    public void ResumeFollowing()
-    {
-        followTarget = true;
-    }
-
-    public void EnableClamping(bool value)
-    {
-        enableClamping = value;
     }
 
     public void SnapToTarget(Transform snapTarget)
     {
+        if (snapTarget == null) return;
+
         Vector3 pos = transform.position;
         pos.x = snapTarget.position.x;
         pos.y = snapTarget.position.y;
         transform.position = pos;
 
-        if (enableClamping)
-        {
+        if (enableClamping && clampMin && clampMax)
             ClampCamera();
-        }
     }
 
 #if UNITY_EDITOR
-    // Auto-update clamp when aspect ratio changes
     private void OnValidate()
     {
-        if (cam == null) cam = GetComponent<Camera>();
+        if (cam == null)
+            cam = GetComponent<Camera>();
+
         RecalculateCameraSize();
     }
 #endif

@@ -37,19 +37,38 @@ public class GrowBlock : MonoBehaviour
     {
         if (isPloughed || preventUse) return;
 
+        FindSoilMapIfNeeded();
+
         isPloughed = true;
         SetSoilTile(tilledSoilTile);
         UpdateGridInfo();
+    }
+
+    private void FindSoilMapIfNeeded()
+    {
+        if (soilMap != null) return;
+
+        GameObject soilObj = GameObject.FindGameObjectWithTag("GroundOverlay");
+        if (soilObj == null)
+        {
+            Debug.LogError("GroundOverlay Tilemap not found in scene.");
+            return;
+        }
+
+        soilMap = soilObj.GetComponent<Tilemap>();
     }
 
     public void WaterSoil()
     {
         if (!isPloughed || preventUse) return;
 
+        FindSoilMapIfNeeded();
+
         isWatered = true;
         SetSoilTile(wateredSoilTile);
         UpdateGridInfo();
     }
+
 
     // ---------- CROP ----------
 
@@ -152,19 +171,15 @@ public class GrowBlock : MonoBehaviour
 
     public void ApplyVisualState()
     {
+        FindSoilMapIfNeeded();
+        if (soilMap == null) return;
+
         Vector3Int cellPos = soilMap.WorldToCell(transform.position);
 
         if (!isPloughed)
-        {
             soilMap.SetTile(cellPos, null);
-        }
         else
-        {
-            soilMap.SetTile(
-                cellPos,
-                isWatered ? wateredSoilTile : tilledSoilTile
-            );
-        }
+            soilMap.SetTile(cellPos, isWatered ? wateredSoilTile : tilledSoilTile);
 
         soilMap.RefreshTile(cellPos);
 
@@ -179,10 +194,15 @@ public class GrowBlock : MonoBehaviour
         }
     }
 
+
     void SetSoilTile(TileBase tile)
     {
+        FindSoilMapIfNeeded();
+        if (soilMap == null) return;
+
         Vector3Int pos = soilMap.WorldToCell(transform.position);
         soilMap.SetTile(pos, tile);
         soilMap.RefreshTile(pos);
     }
 }
+
