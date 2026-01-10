@@ -15,7 +15,9 @@ public class BedController : MonoBehaviour
                 // GridInfo.Instance.GrowCrop();
                 if (TimeController.Instance != null)
                 {
+                    // SaveManager.Instance.SaveGame();
                     TimeController.Instance.EndDay();
+
                 }
             }
         }

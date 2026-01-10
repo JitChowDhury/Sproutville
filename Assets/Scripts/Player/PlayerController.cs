@@ -26,11 +26,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Transform toolIndicator;
     [SerializeField] private float toolRange = 3f;
     [SerializeField] private InputActionAsset inputActions;
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip hoeSound;
+    [SerializeField] private AudioClip waterSound;
+    [SerializeField] private AudioClip seedSound;
+
 
 
     [SerializeField] private float toolWaitTime = .5f;
     private float toolWaitCounter;
     private Vector3 indicatorTargetPos;
+    private bool isGameplayActive;
+
     public CropController.CropType seedCropType;
 
 
@@ -51,6 +59,7 @@ public class PlayerController : MonoBehaviour
 
     void Start()
     {
+        isGameplayActive = false;
         UIController.Instance.SwitchTool((int)currentTool);
         UIController.Instance.SwitchSeed(seedCropType);
     }
@@ -62,6 +71,9 @@ public class PlayerController : MonoBehaviour
             Instance = this;
             DontDestroyOnLoad(gameObject);
             SceneManager.sceneLoaded += OnSceneLoaded;
+            if (audioSource == null)
+                audioSource = GetComponent<AudioSource>();
+
         }
         else
         {
@@ -71,16 +83,19 @@ public class PlayerController : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        inputActions.Disable();
-        inputActions.Enable();
+        if (animator == null)
+            animator = GetComponent<Animator>();
 
+        if (animator != null)
+        {
+            animator.ResetTrigger("hoeTrigger");
+            animator.ResetTrigger("waterTrigger");
+        }
 
         isUsingTool = false;
         toolWaitCounter = 0f;
-
-        animator.ResetTrigger("hoeTrigger");
-        animator.ResetTrigger("waterTrigger");
     }
+
 
 
     private void OnEnable()
@@ -288,6 +303,8 @@ public class PlayerController : MonoBehaviour
                         if (block.PlantCrop(seedCropType))
                         {
                             CropController.Instance.UseSeed(seedCropType);
+                            if (seedSound != null)
+                                audioSource.PlayOneShot(seedSound);
                         }
 
                     }
@@ -308,7 +325,8 @@ public class PlayerController : MonoBehaviour
         isUsingTool = true;
 
         int dir = animator.GetInteger("orientation");
-
+        if (hoeSound != null)
+            audioSource.PlayOneShot(hoeSound);
 
         animator.SetTrigger("hoeTrigger");
         // animator.Play(clipName, 0, 0);
@@ -322,7 +340,8 @@ public class PlayerController : MonoBehaviour
         isUsingTool = true;
 
         int dir = animator.GetInteger("orientation");
-
+        if (waterSound != null)
+            audioSource.PlayOneShot(waterSound);
 
         animator.SetTrigger("waterTrigger");
         // animator.Play(clipName, 0, 0);
@@ -346,6 +365,11 @@ public class PlayerController : MonoBehaviour
     {
         seedCropType = newSeed;
     }
+    public void EnableGameplay()
+    {
+        isGameplayActive = true;
+    }
+
 }
 
 
