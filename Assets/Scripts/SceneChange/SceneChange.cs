@@ -3,13 +3,21 @@ using UnityEngine.SceneManagement;
 
 public class SceneChange : MonoBehaviour
 {
-    [SerializeField] private string gameplaySceneName = "Farm"; // change if needed
+    [SerializeField] private string gameplaySceneName = "MainLevel";
 
     public void StartGame()
     {
-        SceneManager.LoadScene("MainLevel");
+
+        SceneManager.LoadScene(gameplaySceneName);
     }
 
+
+    public void NewGame()
+    {
+
+
+        SceneManager.LoadScene(gameplaySceneName);
+    }
 
     public void QuitGame()
     {

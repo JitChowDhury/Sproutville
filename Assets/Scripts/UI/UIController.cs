@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
@@ -12,6 +13,7 @@ public class UIController : MonoBehaviour
     public InventoryController ic;
     public ShopController theShop;
     public Image seedImage;
+    public GameObject pauseScreen;
 
     private void Awake()
     {
@@ -25,10 +27,14 @@ public class UIController : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    void Start()
+    private void Start()
     {
-
+        if (CurrencyController.Instance != null)
+        {
+            UpdateMoneyText(CurrencyController.Instance.currentMoney);
+        }
     }
+
 
     void Update()
     {
@@ -42,6 +48,11 @@ public class UIController : MonoBehaviour
             theShop.OpenClose();
         }
 #endif
+        if (Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            PauseUnpause();
+        }
+
     }
 
     public void SwitchTool(int selected)
@@ -87,6 +98,37 @@ public class UIController : MonoBehaviour
     public void UpdateMoneyText(float currentMoney)
     {
         moneyText.text = currentMoney.ToString();
+    }
+
+    public void PauseUnpause()
+    {
+        if (pauseScreen.activeSelf == false)
+        {
+            pauseScreen.SetActive(true);
+            Time.timeScale = 0f;
+        }
+        else
+        {
+            pauseScreen.SetActive(false);
+            Time.timeScale = 1f;
+        }
+
+    }
+
+    public void MainMenu()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene("MainMenu");
+        Destroy(gameObject);
+        Destroy(GridInfo.Instance.gameObject);
+        Destroy(TimeController.Instance.gameObject);
+        Destroy(CropController.Instance.gameObject);
+        Destroy(CurrencyController.Instance.gameObject);
+    }
+
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 
 }

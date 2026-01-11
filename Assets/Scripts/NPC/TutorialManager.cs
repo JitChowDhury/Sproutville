@@ -28,6 +28,10 @@ public class TutorialManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
+    public void ForceSetState(TutorialState state)
+    {
+        CurrentState = state;
+    }
 
     public void SetState(TutorialState newState)
     {

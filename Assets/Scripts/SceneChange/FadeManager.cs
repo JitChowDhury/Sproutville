@@ -54,11 +54,13 @@ public class FadeManager : MonoBehaviour
 
         while (t < fadeDuration)
         {
-            t += Time.deltaTime;
+            t += Time.unscaledDeltaTime;
             fadeGroup.alpha = Mathf.Lerp(from, to, t / fadeDuration);
             yield return null;
         }
+
         fadeGroup.alpha = to;
     }
+
 
 }

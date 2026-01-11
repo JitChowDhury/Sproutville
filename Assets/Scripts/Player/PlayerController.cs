@@ -64,37 +64,39 @@ public class PlayerController : MonoBehaviour
         UIController.Instance.SwitchSeed(seedCropType);
     }
 
-    void Awake()
+    private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-            SceneManager.sceneLoaded += OnSceneLoaded;
-            if (audioSource == null)
-                audioSource = GetComponent<AudioSource>();
-
-        }
-        else
+        if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
+            return;
         }
+
+        Instance = this;
+        DontDestroyOnLoad(gameObject);
+
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+        SceneManager.sceneLoaded += OnSceneLoaded;
     }
+
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        if (this == null || gameObject == null)
+            return;
         if (animator == null)
             animator = GetComponent<Animator>();
 
-        if (animator != null)
-        {
-            animator.ResetTrigger("hoeTrigger");
-            animator.ResetTrigger("waterTrigger");
-        }
+        animator.ResetTrigger("hoeTrigger");
+        animator.ResetTrigger("waterTrigger");
 
         isUsingTool = false;
         toolWaitCounter = 0f;
+
+        EnableGameplay();
+        inputActions.Enable();
     }
+
 
 
 
@@ -128,6 +130,14 @@ public class PlayerController : MonoBehaviour
             if (UIController.Instance.theShop != null)
             {
                 if (UIController.Instance.theShop.gameObject.activeSelf == true)
+                {
+                    return;
+                }
+            }
+
+            if (UIController.Instance.theShop != null)
+            {
+                if (UIController.Instance.pauseScreen.gameObject.activeSelf == true)
                 {
                     return;
                 }
